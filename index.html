@@ -434,6 +434,199 @@ body::after {
 .conn-btn:hover .conn-l { color: var(--mag); }
 .conn-via { font-size: clamp(0.55rem, 1vw, 0.65rem); color: #004400; margin-left: auto; }
 
+/* ── REFERENTES ── */
+.ref-lbl {
+  font-size: clamp(0.6rem, 1.1vw, 0.7rem);
+  color: var(--magd);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+  margin-top: 0.2rem;
+}
+.ref-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 1.6rem;
+}
+.ref-card {
+  border: 1px solid #002800;
+  cursor: pointer;
+  transition: border-color 0.1s;
+  position: relative;
+  overflow: hidden;
+  background: #020902;
+}
+.ref-card:hover { border-color: var(--mag); }
+.ref-card.open { border-color: var(--mag); }
+
+.ref-img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #010801;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.ref-img img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(40%) contrast(1.1);
+  transition: filter 0.2s;
+}
+.ref-card:hover .ref-img img { filter: grayscale(0%) contrast(1.2); }
+.ref-img-placeholder {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(1.2rem, 2vw, 1.8rem);
+  color: #003300;
+  font-family: 'VT323', monospace;
+  letter-spacing: 0.1em;
+  border: 1px dashed #002200;
+  flex-direction: column;
+  gap: 4px;
+}
+.ref-img-placeholder span {
+  font-size: clamp(0.5rem, 0.9vw, 0.6rem);
+  color: #002200;
+  font-family: 'Share Tech Mono', monospace;
+  letter-spacing: 0.08em;
+}
+.ref-card-label {
+  padding: 5px 7px;
+  font-size: clamp(0.52rem, 0.9vw, 0.62rem);
+  color: var(--gd);
+  line-height: 1.3;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ref-card:hover .ref-card-label { color: var(--green); }
+
+/* expanded panel — full width below grid */
+.ref-expanded {
+  display: none;
+  border: 1px solid var(--mag);
+  border-top: 2px solid var(--mag);
+  background: #0d000d;
+  padding: 1rem 1.1rem;
+  margin-bottom: 1rem;
+  animation: fadein 0.18s ease;
+  position: relative;
+  grid-column: 1 / -1;
+}
+.ref-expanded.on { display: block; }
+.ref-exp-close {
+  position: absolute; top: 0.6rem; right: 0.8rem;
+  background: none; border: none;
+  color: var(--gd); font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.55rem, 1vw, 0.65rem);
+  cursor: pointer; letter-spacing: 0.08em;
+  transition: color 0.1s;
+}
+.ref-exp-close:hover { color: var(--mag); }
+.ref-exp-title {
+  font-family: 'VT323', monospace;
+  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+  color: var(--mag);
+  line-height: 1.1;
+  margin-bottom: 2px;
+  padding-right: 3rem;
+}
+.ref-exp-sub {
+  font-size: clamp(0.58rem, 1vw, 0.68rem);
+  color: var(--cyan);
+  letter-spacing: 0.06em;
+  margin-bottom: 0.6rem;
+}
+.ref-exp-body {
+  font-size: clamp(0.62rem, 1.1vw, 0.74rem);
+  color: var(--white);
+  line-height: 1.85;
+}
+
+/* mobile referentes */
+.mob-ref-lbl {
+  font-size: clamp(0.58rem, 2vw, 0.7rem);
+  color: var(--magd);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+.mob-ref-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5px;
+  margin-bottom: 1rem;
+}
+.mob-ref-card {
+  border: 1px solid #002800;
+  cursor: pointer;
+  background: #020902;
+  transition: border-color 0.1s;
+}
+.mob-ref-card:hover, .mob-ref-card.open { border-color: var(--mag); }
+.mob-ref-img {
+  width: 100%; aspect-ratio: 1/1;
+  background: #010801;
+  display: flex; align-items: center; justify-content: center;
+}
+.mob-ref-img-ph {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'VT323', monospace;
+  font-size: clamp(1rem, 4vw, 1.4rem);
+  color: #003300;
+  border: 1px dashed #002200;
+  flex-direction: column; gap: 3px;
+}
+.mob-ref-img-ph span {
+  font-size: clamp(0.48rem, 1.6vw, 0.6rem);
+  color: #002200;
+  font-family: 'Share Tech Mono', monospace;
+}
+.mob-ref-label {
+  padding: 4px 6px;
+  font-size: clamp(0.5rem, 1.7vw, 0.62rem);
+  color: var(--gd);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.mob-ref-expanded {
+  display: none;
+  border: 1px solid var(--mag);
+  border-top: 2px solid var(--mag);
+  background: #0d000d;
+  padding: 0.8rem;
+  margin-bottom: 0.8rem;
+  animation: fadein 0.15s ease;
+  position: relative;
+}
+.mob-ref-expanded.on { display: block; }
+.mob-ref-exp-close {
+  position: absolute; top: 0.5rem; right: 0.6rem;
+  background: none; border: none;
+  color: var(--gd); font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.52rem, 1.8vw, 0.62rem);
+  cursor: pointer;
+}
+.mob-ref-exp-close:hover { color: var(--mag); }
+.mob-ref-exp-title {
+  font-family: 'VT323', monospace;
+  font-size: clamp(1.1rem, 4vw, 1.4rem);
+  color: var(--mag); line-height: 1.1;
+  margin-bottom: 2px; padding-right: 2.5rem;
+}
+.mob-ref-exp-sub {
+  font-size: clamp(0.55rem, 1.9vw, 0.68rem);
+  color: var(--cyan); margin-bottom: 0.5rem;
+}
+.mob-ref-exp-body {
+  font-size: clamp(0.6rem, 2vw, 0.72rem);
+  color: var(--white); line-height: 1.8;
+}
+
 /* tag results */
 .tr { animation: fadein 0.2s ease; }
 .tr-head {
@@ -785,59 +978,83 @@ const DATA = [
   { l:"(A)", a:"Artivista",      n:"Pertenecientes a Microsoft",
     d:"Atrapadas en las cadenas del sistema. Leen esteganográficamente el poder oculto en el software.",
     b:"Viven bajo papá Microsoft. El sistema operativo como dispositivo patriarcal. La ideología viaja en el código, invisible como el aire, hegemónica como la gravedad. La netiana perteneciente a Microsoft surge desde el limen del mismo sistema que la contiene. <em>Lee lo ilegible.</em> Advierte el peligro que se mimetiza con el paisaje acostumbrado.",
-    t:["poder corporativo","esteganografía","limen","patriarcado digital","software libre"] },
+    t:["poder corporativo","esteganografía","limen","patriarcado digital","software libre",
+       "vigilancia","biopolítica","Haraway","cuerpo-máquina","cyborg",
+       "frontera","algoritmo","dato","academia","legitimidad"] },
   { l:"(B)", a:"Buscadora",      n:"Latentes",
     d:"La pantalla como jardín secreto. El doble vector: exceso de lo virtual / búsqueda de lo real.",
     b:"¿Qué internauta no lleva una netiana dentro? La pantalla como hogar íntimo, como jardín secreto donde caer lejos del cuerpo. <em>El maquillaje como cirugía del alma.</em> La netiana latente vive en la tensión entre el exceso de virtualidad y la insuficiencia de lo real.",
-    t:["pantalla","jardín secreto","virtualidad","cuerpo","Kristeva"] },
+    t:["pantalla","jardín secreto","virtualidad","cuerpo","Kristeva",
+       "presencia","efímero"] },
   { l:"(C)", a:"Cyborg",         n:"Inventadas",
     d:"No se nace netiana: se hace. Cuerpos-texto, performatividad, desidentificación sexual.",
     b:"No precisa de cuerpo virtual antropomorfizado. <em>No se nace netiana: se hace netiana.</em> Las netianas inventadas son ficción que se produce en el mismo territorio del discurso que pretende modificar. La performatividad (Butler) opera: el género se enuncia y al enunciarse se realiza. En internet, todo esto es reversible.",
-    t:["Butler","performatividad","cuerpo-texto","ficción","desidentificación"] },
+    t:["Butler","performatividad","cuerpo-texto","ficción","desidentificación",
+       "cuerpo","devenir","identidad","Haraway","cyborg","posthumano",
+       "cuerpo-máquina","teatralidad digital","avatar","queer","no-normativo"] },
   { l:"(D)", a:"Doméstica",      n:"Prosopon",
     d:"La máscara griega. Identidad como actuación. El avatar como puesta en escena del yo.",
     b:"Prosopon: la máscara del teatro griego que da nombre a la persona. Online, toda presencia es máscara. <em>Postmascarada.</em> El lugar donde el cansancio de representar permite, finalmente, ser.",
-    t:["máscara","avatar","representación","performatividad","teatralidad digital"] },
+    t:["máscara","avatar","representación","performatividad","teatralidad digital",
+       "identidad","Kristeva","jardín secreto","virtualidad","cuerpo-texto",
+       "Butler","presencia","identidad online","formato"] },
   { l:"(E)", a:"Esteganógrafa",  n:"Cyborgs",
     d:"Herederas de Haraway. La frontera borrosa entre cuerpo y máquina como posición política.",
     b:"Heredera directa del Manifiesto Cyborg de Donna Haraway. El cyborg: comprometido con la parcialidad, la ironía, la intimidad y la perversidad. <em>Infieles a su parentesco patriarcal.</em> La netiana cyborg habita la frontera entre lo orgánico y lo digital sin nostalgia por ninguno de los dos lados.",
-    t:["Haraway","cyborg","posthumano","cuerpo-máquina","frontera"] },
+    t:["Haraway","cyborg","posthumano","cuerpo-máquina","frontera",
+       "cuerpo","vigilancia","biopolítica","esteganografía","devenir",
+       "identidad","cuerpo-texto","devenir-animal"] },
   { l:"(F)", a:"Flâneuse",       n:"«Fabulosas»",
     d:"Lo que el patriarcado no puede clasificar. Irrupción de lo fantástico y lo no-normativo.",
     b:"Las fabulosas no caben en ninguna categoría. Son lo que desborda, lo que excede. <em>Herederas del etcétera de Borges.</em> Su existencia es una grieta en el sistema. Aparecen donde no deberían y proliferan donde se las niega.",
-    t:["queer","exceso","no-normativo","Borges","ficción"] },
+    t:["queer","exceso","no-normativo","Borges","ficción",
+       "ironía","etcétera"] },
   { l:"(G)", a:"Geek",           n:"Google",
     d:"Sujeto de la vigilancia algorítmica. Identidad reducida a dato, búsqueda, perfil.",
     b:"La netiana Google existe como conjunto de búsquedas. Su identidad: un historial, un perfil, una cookie. <em>Sujeto que se produce en la mirada del algoritmo.</em> La vigilancia como servicio. El dato como cuerpo nuevo.",
-    t:["algoritmo","vigilancia","dato","biopolítica","poder corporativo"] },
+    t:["algoritmo","vigilancia","dato","biopolítica","poder corporativo",
+       "identidad","software libre","meritocracia"] },
   { l:"(H)", a:"Hacktivista",    n:"Incluidas en esta clasificación",
     d:"Giro autoconsciente: la netiana sabe que está siendo taxonomizada. Lo subvierte.",
     b:"El momento en que la taxonomía se mira a sí misma y ríe. <em>Performatividad consciente.</em> Si todo intento de clasificarme me constituye, que sea yo quien lo haga primero.",
-    t:["metaficción","ironía","performatividad","autoconciencia","Borges"] },
+    t:["metaficción","ironía","performatividad","autoconciencia","Borges",
+       "archivo","Butler","representación","teatralidad digital","no-normativo",
+       "máscara","tipografía","academia","formato","software libre"] },
   { l:"(I)", a:"Invisible",      n:"Chateadoras compulsivas",
     d:"El chat como desbordamiento. Tiempo disuelto, identidad proliferante, presencia sin cuerpo.",
     b:"El chat como modo de existencia. Las netianas chateadoras pasan más tiempo siendo <em>otras</em> que siendo ellas mismas. La identidad prolifera, se multiplica, se contradice. El tiempo de conexión supera al tiempo offline. ¿Cuál es el original?",
-    t:["multiplicidad","identidad online","presencia","pantalla","tiempo"] },
+    t:["multiplicidad","identidad online","presencia","pantalla","tiempo",
+       "identidad","Kristeva","jardín secreto","desidentificación",
+       "máscara","dato","exceso","efímero","indeterminación"] },
   { l:"(J)", a:"Jinetera",       n:"Incontables",
     d:"La multiplicidad como resistencia. Lo que no puede ser capturado por ningún sistema de conteo.",
     b:"Las incontables son lo que excede toda estadística, todo censo, toda métrica de plataforma. <em>Resistencia por multiplicidad.</em> Como los rizomas: sin principio ni fin. Cada netiana incontable es una línea de fuga que escapa a la captura del dato.",
-    t:["multiplicidad","rizoma","líneas de fuga","Deleuze","incontabilidad"] },
+    t:["multiplicidad","rizoma","líneas de fuga","Deleuze","incontabilidad",
+       "devenir","avatar","desidentificación","queer","frontera",
+       "algoritmo","apertura","devenir-animal","identidad online","indeterminación"] },
   { l:"(K)", a:"Karaokista",     n:"Descritas en Times New Roman",
     d:"La tipografía como ideología. El formato académico como dispositivo de poder invisible.",
     b:"Times New Roman: la letra del saber legítimo. La netiana descrita en Times New Roman requiere ser validada por el discurso académico para poder existir. <em>La forma como contenido ideológico.</em> El font como régimen.",
-    t:["tipografía","academia","legitimidad","poder corporativo","formato"] },
+    t:["tipografía","academia","legitimidad","poder corporativo","formato",
+       "archivo","identidad","representación","metaficción","autoconciencia",
+       "meritocracia"] },
   { l:"(L)", a:"Lurker",         n:"Etcétera",
     d:"El etcétera como apertura radical. La lista nunca se cierra. Siempre hay más.",
     b:"El etcétera de Borges, recuperado por Zafra: apertura radical que impide el cierre. La netiana etcétera es la que siempre falta, la que viene después. <em>La taxonomía como promesa incumplible.</em> El etcétera es la democracia de lo no-dicho.",
-    t:["apertura","Borges","indeterminación","líneas de fuga","etcétera"] },
+    t:["apertura","Borges","indeterminación","líneas de fuga","etcétera",
+       "archivo","ironía","metaficción","autoconciencia","tipografía",
+       "rizoma"] },
   { l:"(M)", a:"Multitud",       n:"Que entran en Silicon Valley",
     d:"La ilusión meritocrática. La mujer tech como anomalía tolerada por el sistema.",
     b:"La netiana que entra en Silicon Valley descubre que el garaje era solo de chicos. <em>Ingresan como anomalía, se quedan como excepción que confirma la regla.</em> Su presencia normaliza sin transformar.",
-    t:["poder corporativo","meritocracia","patriarcado digital","limen","software libre"] },
+    t:["poder corporativo","meritocracia","patriarcado digital","limen","software libre",
+       "legitimidad","incontabilidad"] },
   { l:"(N)", a:"Nómade",         n:"Que viven lo que una mosca",
     d:"Efímera duración de las identidades online. Devenir-mosca deleuziano. Obsolescencia del sujeto.",
     b:"Las que viven lo que una mosca: la efímera duración de los perfiles, las identidades online. <em>Devenir-animal, devenir-molecular.</em> Una netiana de hace unos meses deja de estar a la moda. La muerte programada del sujeto conectado.",
-    t:["Deleuze","devenir-animal","efímero","multiplicidad","tiempo"] }
+    t:["Deleuze","devenir-animal","efímero","multiplicidad","tiempo",
+       "devenir","posthumano","virtualidad","identidad online","apertura",
+       "etcétera","indeterminación","rizoma","exceso"] }
 ];
 
 /* rizoma map */
@@ -994,6 +1211,14 @@ function showNode(idx) {
     <div class="dp-body">${n.b}</div>
     <div class="sec-lbl">// tags — click para navegar el rizoma →</div>
     <div class="tags" id="tags-wrap"></div>
+    <div class="ref-lbl">// referentes →</div>
+    <div class="ref-grid" id="ref-grid"></div>
+    <div class="ref-expanded" id="ref-expanded">
+      <button class="ref-exp-close" id="ref-exp-close">[ × CERRAR ]</button>
+      <div class="ref-exp-title" id="ref-exp-title"></div>
+      <div class="ref-exp-sub"  id="ref-exp-sub"></div>
+      <div class="ref-exp-body" id="ref-exp-body"></div>
+    </div>
     <div class="conn-lbl">// mesetas conectadas (${conns.length})</div>
     <div class="conns" id="conns-wrap"></div>`;
   body.appendChild(wrap);
@@ -1011,6 +1236,9 @@ function showNode(idx) {
       tw.appendChild(btn);
     });
   })();
+
+  // ── REFERENTES ──
+  buildRefGrid(document.getElementById('ref-grid'), document.getElementById('ref-expanded'));
 
   const cw = document.getElementById('conns-wrap');
   conns.forEach(c => {
