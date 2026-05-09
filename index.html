@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>N(H)ACER MUJER EN INTERNET</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
+
+:root {
+  --black: #050505;
+  --green: #00ff41;
+  --gd: #00aa2a;
+  --gf: #001a00;
+  --mag: #ff00ff;
+  --magd: #880088;
+  --cyan: #00ffff;
+  --white: #e0ffe0;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  background: var(--black);
+  color: var(--green);
+  font-family: 'Share Tech Mono', monospace;
+  overflow: hidden;
+  cursor: crosshair;
+}
+
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px);
+  pointer-events: none;
+  z-index: 9000;
+}
+
+#scan {
+  position: fixed; left: 0; right: 0; height: 3px;
+  background: linear-gradient(transparent, rgba(0,255,65,0.08), transparent);
+  pointer-events: none; z-index: 8999;
+  animation: scanmove 7s linear infinite;
+}
+@keyframes scanmove { 0% { top: -2%; } 100% { top: 102%; } }
+@keyframes blink    { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+@keyframes fadein   { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+@keyframes typer    { from{width:0} to{width:100%} }
+@keyframes glitch {
+  0%,87%,100% { transform:translate(0); clip-path:none; }
+  88% { transform:translate(-3px,1px); clip-path:inset(15% 0 60% 0); }
+  90% { transform:translate(3px,-1px); clip-path:inset(70% 0 5% 0); }
+  92% { transform:translate(-1px,2px); clip-path:inset(40% 0 30% 0); }
+}
+
+/* ── VIEWS ── */
+.view { display: none; position: absolute; inset: 0; flex-direction: column; overflow: hidden; }
+.view.on { display: flex; }
+
+/* ════════════════════════════════
+   BOOT
+════════════════════════════════ */
+#boot {
+  padding: clamp(1.2rem, 4vw, 3rem);
+  justify-content: flex-end;
+  background: var(--black);
+}
+#boot-log {
+  flex: 1; overflow: hidden;
+  display: flex; flex-direction: column; justify-content: flex-end;
+}
+.boot-line {
+  font-size: clamp(0.75rem, 2vw, 1rem);
+  line-height: 2;
+  white-space: pre;
+  overflow: hidden;
+  width: 0;
+  color: var(--gd);
+}
+.boot-line.mg { color: var(--mag); }
+.boot-line.br { color: var(--green); text-shadow: 0 0 8px var(--green); }
+
+#boot-enter {
+  display: none;
+  margin-top: 1.8rem;
+  font-family: 'VT323', monospace;
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  color: var(--green);
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  animation: blink 1.3s step-end infinite;
+  width: fit-content;
+}
+#boot-enter:hover { color: var(--mag); text-shadow: 0 0 14px var(--mag); animation: none; }
+.boot-cursor {
+  display: inline-block; width: 0.7em; height: 1.1em;
+  background: var(--green); vertical-align: text-bottom;
+  animation: blink 1s step-end infinite;
+}
+
+/* ════════════════════════════════
+   HOME — GRID DE MÓDULOS
+════════════════════════════════ */
+#home {
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.home-header {
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--gd);
+  padding: 0.9rem 1.2rem 0.7rem;
+  background: var(--black);
+}
+.home-title {
+  font-family: 'VT323', monospace;
+  font-size: clamp(2.2rem, 6vw, 4rem);
+  color: var(--green);
+  text-shadow: 0 0 20px var(--green), 0 0 40px var(--gd);
+  animation: glitch 8s infinite;
+  line-height: 1;
+}
+.home-title .mag { color: var(--mag); text-shadow: 0 0 20px var(--mag); }
+.home-meta {
+  font-size: clamp(0.65rem, 1.5vw, 0.8rem);
+  color: var(--gd);
+  letter-spacing: 0.12em;
+  margin-top: 0.4rem;
+}
+.home-meta span { color: var(--mag); }
+
+.home-bar {
+  padding: 0.4rem 1.2rem;
+  font-size: clamp(0.6rem, 1.3vw, 0.75rem);
+  color: var(--gd);
+  background: var(--gf);
+  display: flex; gap: 2rem; flex-wrap: wrap;
+  flex-shrink: 0;
+  border-bottom: 1px solid #002200;
+}
+.home-bar b { color: var(--green); }
+
+.home-tax {
+  padding: 0.6rem 1.2rem 0.3rem;
+  font-size: clamp(0.6rem, 1.2vw, 0.72rem);
+  color: var(--magd);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.home-grid {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 1px 1px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1px;
+  background: #001200;
+  align-content: start;
+}
+.home-grid::-webkit-scrollbar { width: 3px; }
+.home-grid::-webkit-scrollbar-thumb { background: var(--gd); }
+
+.hg-node {
+  background: var(--black);
+  padding: 1rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.08s;
+  animation: fadein 0.4s ease both;
+  display: flex; flex-direction: column;
+  min-height: 110px;
+}
+.hg-node:hover {
+  border-color: var(--green);
+  background: #001600;
+  box-shadow: inset 0 0 20px rgba(0,255,65,0.04);
+}
+.hg-letter {
+  font-family: 'VT323', monospace;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  color: var(--mag);
+  text-shadow: 0 0 12px var(--magd);
+  line-height: 1;
+  margin-bottom: 0.2rem;
+}
+.hg-node:hover .hg-letter { text-shadow: 0 0 20px var(--mag); }
+.hg-alias {
+  font-family: 'VT323', monospace;
+  font-size: clamp(1rem, 2.2vw, 1.4rem);
+  color: var(--cyan);
+  line-height: 1.1;
+  margin-bottom: 0.3rem;
+  letter-spacing: 0.04em;
+}
+.hg-name {
+  font-size: clamp(0.6rem, 1.2vw, 0.72rem);
+  color: var(--gd);
+  line-height: 1.4;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.hg-node:hover .hg-name { color: var(--green); }
+.hg-desc {
+  font-size: clamp(0.55rem, 1.1vw, 0.65rem);
+  color: #003800;
+  line-height: 1.5;
+  margin-top: auto;
+  padding-top: 0.4rem;
+  display: none;
+}
+.hg-node:hover .hg-desc { display: block; color: var(--gd); }
+
+/* ════════════════════════════════
+   MAIN — SIDEBAR + DETAIL
+════════════════════════════════ */
+#main { flex-direction: row; }
+
+/* sidebar */
+.sb {
+  width: clamp(200px, 26vw, 280px);
+  flex-shrink: 0;
+  border-right: 1px solid var(--gd);
+  display: flex; flex-direction: column;
+  height: 100%;
+  background: var(--black);
+}
+
+/* sb-head is now a clickable home link */
+.sb-head {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--gf);
+  flex-shrink: 0;
+  font-family: 'VT323', monospace;
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  color: var(--green);
+  text-shadow: 0 0 12px var(--green);
+  animation: glitch 10s infinite;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: color 0.1s;
+  user-select: none;
+}
+.sb-head:hover { color: var(--cyan); text-shadow: 0 0 12px var(--cyan); }
+.sb-head .sub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.55rem, 1vw, 0.65rem);
+  color: var(--gd);
+  letter-spacing: 0.12em;
+  margin-top: 4px;
+  text-shadow: none;
+  animation: none;
+}
+.sb-head:hover .sub { color: var(--cyan); }
+
+.sb-list {
+  flex: 1; overflow-y: auto;
+  padding: 0.2rem 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gd) var(--black);
+}
+.sb-list::-webkit-scrollbar { width: 3px; }
+.sb-list::-webkit-scrollbar-thumb { background: var(--gd); }
+
+.nb {
+  width: 100%; text-align: left;
+  background: none; border: none;
+  border-bottom: 1px solid #001400;
+  padding: 0.65rem 1rem;
+  cursor: pointer;
+  display: flex; align-items: baseline; gap: 0.5rem;
+  transition: background 0.07s;
+}
+.nb:hover, .nb.on { background: #001800; }
+.nb.on { border-left: 2px solid var(--mag); padding-left: calc(1rem - 2px); }
+.nb .nl {
+  font-family: 'VT323', monospace;
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  color: var(--magd);
+  min-width: 2.5rem;
+}
+.nb.on .nl { color: var(--mag); }
+.nb .nn {
+  font-size: clamp(0.65rem, 1.2vw, 0.78rem);
+  color: var(--gd);
+  letter-spacing: 0.03em;
+  line-height: 1.3;
+}
+.nb:hover .nn, .nb.on .nn { color: var(--green); }
+
+.sb-foot {
+  padding: 0.55rem 1rem;
+  border-top: 1px solid var(--gf);
+  font-size: clamp(0.5rem, 0.9vw, 0.6rem);
+  color: #002200;
+  flex-shrink: 0;
+}
+
+/* content area */
+.ct { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+.ct-head {
+  padding: 0.6rem 1.3rem;
+  border-bottom: 1px solid var(--gf);
+  font-size: clamp(0.65rem, 1.2vw, 0.78rem);
+  color: var(--gd);
+  letter-spacing: 0.08em;
+  flex-shrink: 0;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.ct-head span { color: var(--green); }
+
+.ct-body {
+  flex: 1; overflow-y: auto; padding: 1.5rem;
+  scrollbar-width: thin; scrollbar-color: var(--gd) var(--black);
+}
+.ct-body::-webkit-scrollbar { width: 3px; }
+.ct-body::-webkit-scrollbar-thumb { background: var(--gd); }
+
+/* empty state */
+.empty {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  height: 100%; text-align: center; opacity: 0.3;
+}
+.empty-ascii {
+  font-family: 'VT323', monospace;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  color: var(--gd); line-height: 1.3; margin-bottom: 1rem;
+}
+.empty-txt {
+  font-size: clamp(0.7rem, 1.3vw, 0.82rem);
+  color: var(--gd); letter-spacing: 0.1em; line-height: 1.9;
+}
+
+/* ── DETAIL PANEL ── */
+.dp { animation: fadein 0.2s ease; }
+
+.dp-l {
+  font-family: 'VT323', monospace;
+  font-size: clamp(3rem, 7vw, 5rem);
+  color: var(--mag);
+  text-shadow: 0 0 20px var(--mag);
+  line-height: 1;
+}
+.dp-alias {
+  font-family: 'VT323', monospace;
+  font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+  color: var(--cyan);
+  text-shadow: 0 0 10px var(--cyan);
+  letter-spacing: 0.06em;
+  margin-bottom: 0.1rem;
+  line-height: 1.1;
+}
+.dp-n {
+  font-family: 'VT323', monospace;
+  font-size: clamp(1.2rem, 2.8vw, 1.9rem);
+  color: var(--green);
+  text-shadow: 0 0 8px var(--green);
+  margin-bottom: 0.5rem;
+}
+.dp-sep {
+  height: 1px;
+  background: linear-gradient(to right, var(--mag), transparent);
+  margin-bottom: 1rem;
+}
+.dp-body {
+  font-size: clamp(0.78rem, 1.5vw, 0.92rem);
+  color: var(--white);
+  line-height: 2;
+  margin-bottom: 1.3rem;
+  max-width: 640px;
+}
+.dp-body em { color: var(--mag); font-style: normal; }
+
+.sec-lbl {
+  font-size: clamp(0.6rem, 1.1vw, 0.72rem);
+  color: var(--magd);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+/* tags */
+.tags { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 1.4rem; }
+.tag {
+  background: none;
+  border: 1px solid var(--gd);
+  color: var(--gd);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.65rem, 1.2vw, 0.78rem);
+  padding: 4px 12px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: all 0.1s;
+}
+.tag:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  box-shadow: 0 0 8px rgba(0,255,255,0.3);
+}
+
+/* connected nodes */
+.conn-lbl {
+  font-size: clamp(0.6rem, 1.1vw, 0.7rem);
+  color: #003322;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+.conns { display: flex; flex-direction: column; gap: 5px; }
+.conn-btn {
+  background: none;
+  border: 1px solid #001a00;
+  color: var(--gd);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.68rem, 1.2vw, 0.8rem);
+  padding: 0.5rem 0.85rem;
+  cursor: pointer;
+  text-align: left;
+  display: flex; align-items: center; gap: 0.6rem;
+  transition: all 0.1s;
+  width: 100%;
+}
+.conn-btn:hover { border-color: var(--green); color: var(--green); background: var(--gf); }
+.conn-l {
+  font-family: 'VT323', monospace;
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  color: var(--magd);
+  min-width: 2.5rem;
+}
+.conn-btn:hover .conn-l { color: var(--mag); }
+.conn-via { font-size: clamp(0.55rem, 1vw, 0.65rem); color: #004400; margin-left: auto; }
+
+/* tag results */
+.tr { animation: fadein 0.2s ease; }
+.tr-head {
+  border-left: 3px solid var(--cyan);
+  padding: 0.6rem 0.9rem;
+  margin-bottom: 1.1rem;
+  background: rgba(0,255,255,0.03);
+}
+.tr-title {
+  font-family: 'VT323', monospace;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  color: var(--cyan);
+}
+.tr-sub {
+  font-size: clamp(0.62rem, 1.1vw, 0.74rem);
+  color: #005555;
+  letter-spacing: 0.08em;
+}
+.tr-back {
+  background: none; border: 1px solid var(--gd);
+  color: var(--gd); font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.65rem, 1.2vw, 0.78rem);
+  padding: 5px 14px;
+  cursor: pointer; margin-bottom: 1.1rem;
+  letter-spacing: 0.05em;
+  transition: all 0.1s;
+  display: inline-block;
+}
+.tr-back:hover { border-color: var(--green); color: var(--green); }
+
+.tr-list { display: flex; flex-direction: column; gap: 6px; }
+.tr-node {
+  border: 1px solid var(--gf); padding: 0.85rem;
+  cursor: pointer;
+  display: flex; align-items: flex-start; gap: 0.85rem;
+  transition: all 0.1s;
+}
+.tr-node:hover { border-color: var(--cyan); background: rgba(0,255,255,0.03); }
+.tr-l {
+  font-family: 'VT323', monospace;
+  font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+  color: var(--magd); min-width: 2.5rem;
+}
+.tr-node:hover .tr-l { color: var(--mag); }
+.tr-n { font-size: clamp(0.7rem, 1.3vw, 0.84rem); font-weight: bold; color: var(--green); margin-bottom: 3px; }
+.tr-d { font-size: clamp(0.62rem, 1.1vw, 0.74rem); color: var(--gd); line-height: 1.6; }
+
+/* ════════════════════════════════
+   MOBILE
+════════════════════════════════ */
+#mob { background: var(--black); }
+
+.mob-head {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--gd);
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.mob-head:hover { background: #001200; }
+.mob-t {
+  font-family: 'VT323', monospace;
+  font-size: clamp(1.3rem, 5vw, 1.9rem);
+  color: var(--green);
+  text-shadow: 0 0 8px var(--green);
+}
+.mob-s { font-size: clamp(0.6rem, 2vw, 0.72rem); color: var(--gd); letter-spacing: 0.07em; margin-top: 3px; }
+
+/* Mobile home grid */
+#mob-home {
+  flex: 1; overflow-y: auto; padding: 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+  align-content: start;
+}
+#mob-home::-webkit-scrollbar { display: none; }
+
+.mob-hg-node {
+  background: var(--black);
+  border: 1px solid #001800;
+  padding: 0.8rem;
+  cursor: pointer;
+  transition: all 0.08s;
+  min-height: 80px;
+  display: flex; flex-direction: column;
+}
+.mob-hg-node:hover, .mob-hg-node:active {
+  border-color: var(--mag);
+  background: #150015;
+}
+.mob-hg-l {
+  font-family: 'VT323', monospace;
+  font-size: clamp(1.6rem, 6vw, 2.2rem);
+  color: var(--mag);
+  line-height: 1;
+  margin-bottom: 0.1rem;
+}
+.mob-hg-alias {
+  font-family: 'VT323', monospace;
+  font-size: clamp(0.9rem, 3.5vw, 1.2rem);
+  color: var(--cyan);
+  line-height: 1.1;
+  margin-bottom: 0.2rem;
+}
+.mob-hg-name {
+  font-size: clamp(0.58rem, 2vw, 0.7rem);
+  color: var(--gd);
+  line-height: 1.35;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* Mobile detail */
+#mob-detail {
+  display: none;
+  flex: 1; flex-direction: column; overflow: hidden;
+}
+#mob-detail.on { display: flex; }
+
+.mob-detail-body {
+  flex: 1; overflow-y: auto; padding: 1rem;
+  scrollbar-width: none;
+}
+.mob-detail-body::-webkit-scrollbar { display: none; }
+
+.mob-dp-l {
+  font-family: 'VT323', monospace;
+  font-size: clamp(2.5rem, 10vw, 3.5rem);
+  color: var(--mag);
+  text-shadow: 0 0 16px var(--mag);
+  line-height: 1;
+}
+.mob-dp-alias {
+  font-family: 'VT323', monospace;
+  font-size: clamp(1.3rem, 5vw, 1.8rem);
+  color: var(--cyan);
+  line-height: 1.1;
+  margin-bottom: 0.2rem;
+}
+.mob-dp-n {
+  font-family: 'VT323', monospace;
+  font-size: clamp(1.1rem, 4.5vw, 1.5rem);
+  color: var(--green);
+  margin-bottom: 0.5rem;
+}
+.mob-dp-sep {
+  height: 1px;
+  background: linear-gradient(to right, var(--mag), transparent);
+  margin-bottom: 0.9rem;
+}
+.mob-dp-body {
+  font-size: clamp(0.75rem, 3vw, 0.9rem);
+  color: var(--white);
+  line-height: 1.9;
+  margin-bottom: 1rem;
+}
+.mob-dp-body em { color: var(--mag); font-style: normal; }
+.mob-sec-lbl {
+  font-size: clamp(0.58rem, 2vw, 0.7rem);
+  color: var(--magd);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+.mob-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.2rem; }
+.mob-tag {
+  background: none; border: 1px solid var(--gd); color: var(--gd);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.62rem, 2.2vw, 0.75rem);
+  padding: 4px 10px; cursor: pointer; transition: all 0.1s;
+}
+.mob-tag:hover { border-color: var(--cyan); color: var(--cyan); }
+
+.mob-conn-lbl {
+  font-size: clamp(0.58rem, 2vw, 0.7rem);
+  color: #003322; letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+.mob-conns { display: flex; flex-direction: column; gap: 4px; margin-bottom: 1rem; }
+.mob-conn-btn {
+  display: flex; align-items: center; gap: 0.5rem;
+  background: none; border: 1px solid #001400;
+  color: var(--gd); font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.65rem, 2.2vw, 0.78rem);
+  padding: 0.4rem 0.65rem; cursor: pointer; width: 100%;
+  text-align: left; transition: all 0.1s;
+}
+.mob-conn-btn:hover { border-color: var(--green); color: var(--green); }
+.mob-conn-l {
+  font-family: 'VT323', monospace;
+  font-size: clamp(1rem, 3.5vw, 1.3rem);
+  color: var(--magd); min-width: 2rem;
+}
+.mob-conn-via { font-size: clamp(0.52rem, 1.8vw, 0.62rem); color: #004400; margin-left: auto; }
+
+/* tag overlay mobile */
+#mob-ov {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.94);
+  z-index: 200;
+  flex-direction: column;
+  padding: 1rem;
+  animation: fadein 0.15s ease;
+}
+#mob-ov.on { display: flex; }
+.mo-close {
+  align-self: flex-end;
+  background: none; border: 1px solid var(--gd); color: var(--gd);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.65rem, 2.5vw, 0.8rem);
+  padding: 0.35rem 0.8rem; cursor: pointer; margin-bottom: 0.9rem;
+  transition: all 0.1s;
+}
+.mo-close:hover { border-color: var(--mag); color: var(--mag); }
+.mo-title {
+  font-family: 'VT323', monospace;
+  font-size: clamp(1.4rem, 5vw, 2rem);
+  color: var(--cyan);
+  border-left: 3px solid var(--cyan);
+  padding-left: 0.7rem; margin-bottom: 0.4rem;
+}
+.mo-sub { font-size: clamp(0.6rem, 2vw, 0.75rem); color: #005555; margin-bottom: 0.8rem; }
+.mo-list { overflow-y: auto; display: flex; flex-direction: column; gap: 5px; }
+.mo-node {
+  border: 1px solid var(--gf); padding: 0.7rem;
+  cursor: pointer; display: flex; gap: 0.65rem; align-items: flex-start;
+  transition: all 0.1s;
+}
+.mo-node:hover { border-color: var(--cyan); background: rgba(0,255,255,0.03); }
+.mo-l { font-family: 'VT323', monospace; font-size: clamp(1.2rem, 4.5vw, 1.6rem); color: var(--magd); min-width: 2.2rem; }
+.mo-n { font-size: clamp(0.65rem, 2.2vw, 0.8rem); color: var(--green); margin-bottom: 2px; }
+.mo-d { font-size: clamp(0.58rem, 2vw, 0.72rem); color: var(--gd); line-height: 1.5; }
+
+/* tag results in mobile detail */
+.mob-tr { animation: fadein 0.15s ease; }
+.mob-tr-back {
+  background: none; border: 1px solid var(--gd); color: var(--gd);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.65rem, 2.2vw, 0.78rem);
+  padding: 5px 12px; cursor: pointer; margin-bottom: 1rem;
+  transition: all 0.1s; display: inline-block;
+}
+.mob-tr-back:hover { border-color: var(--green); color: var(--green); }
+.mob-tr-head {
+  border-left: 3px solid var(--cyan);
+  padding: 0.5rem 0.7rem; margin-bottom: 0.9rem;
+  background: rgba(0,255,255,0.03);
+}
+.mob-tr-title { font-family: 'VT323', monospace; font-size: clamp(1.3rem, 5vw, 1.8rem); color: var(--cyan); }
+.mob-tr-sub { font-size: clamp(0.58rem, 2vw, 0.7rem); color: #005555; }
+
+/* responsive */
+@media (min-width: 641px) { #mob { display: none !important; } }
+@media (max-width: 640px) {
+  #main { display: none !important; }
+  #mob.on { display: flex !important; }
+}
+</style>
+</head>
+<body>
+<div id="scan"></div>
+
+<!-- ═══ BOOT ═══ -->
+<div class="view on" id="boot">
+  <div id="boot-log"></div>
+  <div id="boot-enter" onclick="goHome()">
+    [ INICIAR RECORRIDO ]<span class="boot-cursor"></span>
+  </div>
+</div>
+
+<!-- ═══ HOME (grilla) ═══ -->
+<div class="view" id="home">
+  <div class="home-header">
+    <div class="home-title">N(H)ACER <span class="mag">MUJER</span><br>EN INTERNET</div>
+    <div class="home-meta">
+      OBRA NET.ART · <span>REMEDIOS ZAFRA</span> · ANTITAXONOMÍA RIZOMÁTICA ·
+      NAVEGAR ES DEVENIR · <span>14 MESETAS</span> · NINGÚN CENTRO
+    </div>
+  </div>
+  <div class="home-bar">
+    <span><b>SYS:</b> seleccionar nodo para iniciar recorrido</span>
+    <span><b>WARN:</b> no existe orden correcto</span>
+    <span><b>STATUS:</b> hipertexto activo</span>
+    <span><b>USER:</b> sujeto en devenir</span>
+  </div>
+  <div class="home-tax">// TAXONOMÍA ABIERTA DE LAS NETIANAS (ANTITAXONOMÍA) — según Borges vía Zafra</div>
+  <div class="home-grid" id="home-grid"></div>
+</div>
+
+<!-- ═══ MAIN DESKTOP (sidebar + detail) ═══ -->
+<div class="view" id="main">
+  <div class="sb">
+    <div class="sb-head" onclick="goHome()" title="Volver al inicio">
+      N(H)ACER<br>
+      <span style="color:var(--mag)">MUJER</span><br>
+      <span style="font-size:.8em">EN INTERNET</span>
+      <div class="sub">// 14 mesetas · ningún centro</div>
+    </div>
+    <div class="sb-list" id="sb-list"></div>
+    <div class="sb-foot">ZAFRA (2005) · todos los recorridos son válidos</div>
+  </div>
+  <div class="ct">
+    <div class="ct-head" id="bc">
+      <span>NETIANAS.NET</span> / seleccionar nodo
+    </div>
+    <div class="ct-body" id="ct-body">
+      <div class="empty">
+        <div class="empty-ascii">○—○—○—○<br>|&nbsp;&nbsp;&nbsp;×&nbsp;&nbsp;&nbsp;|<br>○—○—○—○</div>
+        <div class="empty-txt">
+          seleccionar una netiana para iniciar el recorrido<br>
+          clickear un tag para navegar el rizoma
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MOBILE ═══ -->
+<div class="view" id="mob">
+  <div class="mob-head" onclick="mobGoHome()" title="Volver al inicio">
+    <div class="mob-t">N(H)ACER MUJER <span style="color:var(--mag)">EN INTERNET</span></div>
+    <div class="mob-s">↑ inicio · 14 mesetas · rizoma · Remedios Zafra 2005</div>
+  </div>
+
+  <!-- grid home mobile -->
+  <div id="mob-home"></div>
+
+  <!-- detail view mobile -->
+  <div id="mob-detail">
+    <div class="mob-detail-body" id="mob-detail-body"></div>
+  </div>
+
+  <!-- tag overlay -->
+  <div id="mob-ov">
+    <button class="mo-close" onclick="closeOv()">[ × CERRAR ]</button>
+    <div class="mo-title" id="mo-title"></div>
+    <div class="mo-sub"   id="mo-sub"></div>
+    <div class="mo-list"  id="mo-list"></div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════
+   DATA
+══════════════════════════════════════ */
+const DATA = [
+  { l:"(A)", a:"Artivista",      n:"Pertenecientes a Microsoft",
+    d:"Atrapadas en las cadenas del sistema. Leen esteganográficamente el poder oculto en el software.",
+    b:"Viven bajo papá Microsoft. El sistema operativo como dispositivo patriarcal. La ideología viaja en el código, invisible como el aire, hegemónica como la gravedad. La netiana perteneciente a Microsoft surge desde el limen del mismo sistema que la contiene. <em>Lee lo ilegible.</em> Advierte el peligro que se mimetiza con el paisaje acostumbrado.",
+    t:["poder corporativo","esteganografía","limen","patriarcado digital","software libre"] },
+  { l:"(B)", a:"Buscadora",      n:"Latentes",
+    d:"La pantalla como jardín secreto. El doble vector: exceso de lo virtual / búsqueda de lo real.",
+    b:"¿Qué internauta no lleva una netiana dentro? La pantalla como hogar íntimo, como jardín secreto donde caer lejos del cuerpo. <em>El maquillaje como cirugía del alma.</em> La netiana latente vive en la tensión entre el exceso de virtualidad y la insuficiencia de lo real.",
+    t:["pantalla","jardín secreto","virtualidad","cuerpo","Kristeva"] },
+  { l:"(C)", a:"Cyborg",         n:"Inventadas",
+    d:"No se nace netiana: se hace. Cuerpos-texto, performatividad, desidentificación sexual.",
+    b:"No precisa de cuerpo virtual antropomorfizado. <em>No se nace netiana: se hace netiana.</em> Las netianas inventadas son ficción que se produce en el mismo territorio del discurso que pretende modificar. La performatividad (Butler) opera: el género se enuncia y al enunciarse se realiza. En internet, todo esto es reversible.",
+    t:["Butler","performatividad","cuerpo-texto","ficción","desidentificación"] },
+  { l:"(D)", a:"Doméstica",      n:"Prosopon",
+    d:"La máscara griega. Identidad como actuación. El avatar como puesta en escena del yo.",
+    b:"Prosopon: la máscara del teatro griego que da nombre a la persona. Online, toda presencia es máscara. <em>Postmascarada.</em> El lugar donde el cansancio de representar permite, finalmente, ser.",
+    t:["máscara","avatar","representación","performatividad","teatralidad digital"] },
+  { l:"(E)", a:"Esteganógrafa",  n:"Cyborgs",
+    d:"Herederas de Haraway. La frontera borrosa entre cuerpo y máquina como posición política.",
+    b:"Heredera directa del Manifiesto Cyborg de Donna Haraway. El cyborg: comprometido con la parcialidad, la ironía, la intimidad y la perversidad. <em>Infieles a su parentesco patriarcal.</em> La netiana cyborg habita la frontera entre lo orgánico y lo digital sin nostalgia por ninguno de los dos lados.",
+    t:["Haraway","cyborg","posthumano","cuerpo-máquina","frontera"] },
+  { l:"(F)", a:"Flâneuse",       n:"«Fabulosas»",
+    d:"Lo que el patriarcado no puede clasificar. Irrupción de lo fantástico y lo no-normativo.",
+    b:"Las fabulosas no caben en ninguna categoría. Son lo que desborda, lo que excede. <em>Herederas del etcétera de Borges.</em> Su existencia es una grieta en el sistema. Aparecen donde no deberían y proliferan donde se las niega.",
+    t:["queer","exceso","no-normativo","Borges","ficción"] },
+  { l:"(G)", a:"Geek",           n:"Google",
+    d:"Sujeto de la vigilancia algorítmica. Identidad reducida a dato, búsqueda, perfil.",
+    b:"La netiana Google existe como conjunto de búsquedas. Su identidad: un historial, un perfil, una cookie. <em>Sujeto que se produce en la mirada del algoritmo.</em> La vigilancia como servicio. El dato como cuerpo nuevo.",
+    t:["algoritmo","vigilancia","dato","biopolítica","poder corporativo"] },
+  { l:"(H)", a:"Hacktivista",    n:"Incluidas en esta clasificación",
+    d:"Giro autoconsciente: la netiana sabe que está siendo taxonomizada. Lo subvierte.",
+    b:"El momento en que la taxonomía se mira a sí misma y ríe. <em>Performatividad consciente.</em> Si todo intento de clasificarme me constituye, que sea yo quien lo haga primero.",
+    t:["metaficción","ironía","performatividad","autoconciencia","Borges"] },
+  { l:"(I)", a:"Invisible",      n:"Chateadoras compulsivas",
+    d:"El chat como desbordamiento. Tiempo disuelto, identidad proliferante, presencia sin cuerpo.",
+    b:"El chat como modo de existencia. Las netianas chateadoras pasan más tiempo siendo <em>otras</em> que siendo ellas mismas. La identidad prolifera, se multiplica, se contradice. El tiempo de conexión supera al tiempo offline. ¿Cuál es el original?",
+    t:["multiplicidad","identidad online","presencia","pantalla","tiempo"] },
+  { l:"(J)", a:"Jinetera",       n:"Incontables",
+    d:"La multiplicidad como resistencia. Lo que no puede ser capturado por ningún sistema de conteo.",
+    b:"Las incontables son lo que excede toda estadística, todo censo, toda métrica de plataforma. <em>Resistencia por multiplicidad.</em> Como los rizomas: sin principio ni fin. Cada netiana incontable es una línea de fuga que escapa a la captura del dato.",
+    t:["multiplicidad","rizoma","líneas de fuga","Deleuze","incontabilidad"] },
+  { l:"(K)", a:"Karaokista",     n:"Descritas en Times New Roman",
+    d:"La tipografía como ideología. El formato académico como dispositivo de poder invisible.",
+    b:"Times New Roman: la letra del saber legítimo. La netiana descrita en Times New Roman requiere ser validada por el discurso académico para poder existir. <em>La forma como contenido ideológico.</em> El font como régimen.",
+    t:["tipografía","academia","legitimidad","poder corporativo","formato"] },
+  { l:"(L)", a:"Lurker",         n:"Etcétera",
+    d:"El etcétera como apertura radical. La lista nunca se cierra. Siempre hay más.",
+    b:"El etcétera de Borges, recuperado por Zafra: apertura radical que impide el cierre. La netiana etcétera es la que siempre falta, la que viene después. <em>La taxonomía como promesa incumplible.</em> El etcétera es la democracia de lo no-dicho.",
+    t:["apertura","Borges","indeterminación","líneas de fuga","etcétera"] },
+  { l:"(M)", a:"Multitud",       n:"Que entran en Silicon Valley",
+    d:"La ilusión meritocrática. La mujer tech como anomalía tolerada por el sistema.",
+    b:"La netiana que entra en Silicon Valley descubre que el garaje era solo de chicos. <em>Ingresan como anomalía, se quedan como excepción que confirma la regla.</em> Su presencia normaliza sin transformar.",
+    t:["poder corporativo","meritocracia","patriarcado digital","limen","software libre"] },
+  { l:"(N)", a:"Nómade",         n:"Que viven lo que una mosca",
+    d:"Efímera duración de las identidades online. Devenir-mosca deleuziano. Obsolescencia del sujeto.",
+    b:"Las que viven lo que una mosca: la efímera duración de los perfiles, las identidades online. <em>Devenir-animal, devenir-molecular.</em> Una netiana de hace unos meses deja de estar a la moda. La muerte programada del sujeto conectado.",
+    t:["Deleuze","devenir-animal","efímero","multiplicidad","tiempo"] }
+];
+
+/* rizoma map */
+const RZ = {};
+DATA.forEach((n, i) => n.t.forEach(tag => {
+  if (!RZ[tag]) RZ[tag] = [];
+  RZ[tag].push(i);
+}));
+
+/* ══════════════════════════════════════
+   BOOT
+══════════════════════════════════════ */
+const BOOT = [
+  { s:" ", c:"" },
+  { s:"SISTEMA NETIANA v2.0.05", c:"br" },
+  { s:"Remedios Zafra / N(h)acer mujer en Internet", c:"" },
+  { s:"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", c:"" },
+  { s:" ", c:"" },
+  { s:"[SYS] inicializando antitaxonomía..................... OK", c:"" },
+  { s:"[SYS] cargando 14 mesetas rizomáticas................. OK", c:"" },
+  { s:"[SYS] mapeando conexiones entre netianas.............. OK", c:"" },
+  { s:"[SYS] verificando ausencia de jerarquía............... OK", c:"" },
+  { s:"[SYS] desactivando linealidad......................... OK", c:"" },
+  { s:"[SYS] activando devenir-netiana....................... OK", c:"" },
+  { s:" ", c:"" },
+  { s:"[WARN] no existe un recorrido correcto", c:"mg" },
+  { s:"[WARN] navegar es devenir", c:"mg" },
+  { s:"[WARN] el sujeto se produce en la conexión", c:"mg" },
+  { s:" ", c:"" },
+  { s:"refs: Deleuze/Guattari · Haraway · Butler · Braidotti · Borges", c:"" },
+  { s:" ", c:"" },
+  { s:"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", c:"" },
+];
+
+(function runBoot() {
+  const log = document.getElementById('boot-log');
+  let i = 0;
+  function next() {
+    if (i >= BOOT.length) {
+      setTimeout(() => { document.getElementById('boot-enter').style.display = 'block'; }, 400);
+      return;
+    }
+    const el = document.createElement('div');
+    el.className = 'boot-line ' + BOOT[i].c;
+    el.textContent = BOOT[i].s;
+    const dur = Math.max(60, BOOT[i].s.length * 17);
+    el.style.animationDuration = dur + 'ms';
+    el.style.animation = `typer ${dur}ms linear both`;
+    log.appendChild(el);
+    setTimeout(next, dur + 30);
+    i++;
+  }
+  next();
+})();
+
+/* ══════════════════════════════════════
+   VIEW MANAGEMENT
+══════════════════════════════════════ */
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+}
+
+const isMobile = () => window.innerWidth <= 640;
+
+/* from boot → home */
+function goHome() {
+  if (isMobile()) {
+    showView('mob');
+    mobShowHome();
+  } else {
+    showView('home');
+  }
+}
+
+/* home → detail (desktop) */
+function goDetail(idx) {
+  showView('main');
+  if (!document.getElementById('nb0')) buildSidebar();
+  showNode(idx);
+}
+
+/* ══════════════════════════════════════
+   HOME GRID (desktop)
+══════════════════════════════════════ */
+(function buildHomeGrid() {
+  const grid = document.getElementById('home-grid');
+  DATA.forEach((n, i) => {
+    const el = document.createElement('div');
+    el.className = 'hg-node';
+    el.style.animationDelay = (i * 0.04) + 's';
+    el.innerHTML = `
+      <div class="hg-letter">${n.l}</div>
+      <div class="hg-alias">${n.a}</div>
+      <div class="hg-name">${n.n}</div>
+      <div class="hg-desc">${n.d}</div>`;
+    el.addEventListener('click', () => goDetail(i));
+    grid.appendChild(el);
+  });
+})();
+
+/* ══════════════════════════════════════
+   DESKTOP SIDEBAR + DETAIL
+══════════════════════════════════════ */
+let sidebarBuilt = false;
+function buildSidebar() {
+  if (sidebarBuilt) return;
+  sidebarBuilt = true;
+  const list = document.getElementById('sb-list');
+  DATA.forEach((n, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'nb';
+    btn.id = 'nb' + i;
+    btn.innerHTML = `<span class="nl">${n.l}</span><span class="nn">${n.n}</span>`;
+    btn.addEventListener('click', () => showNode(i));
+    list.appendChild(btn);
+  });
+}
+
+/* history for back button: stores {type:'node'|'home', idx} */
+let navHistory = [];
+
+function showNode(idx) {
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('on'));
+  const nbEl = document.getElementById('nb' + idx);
+  if (nbEl) nbEl.classList.add('on');
+
+  const n = DATA[idx];
+  document.getElementById('bc').innerHTML =
+    `<span>NETIANAS.NET</span> / ${n.l} ${n.a} · ${n.n}`;
+
+  const seen = {};
+  n.t.forEach(tag => {
+    (RZ[tag] || []).forEach(ci => {
+      if (ci !== idx) {
+        if (!seen[ci]) seen[ci] = { idx: ci, via: [] };
+        seen[ci].via.push(tag);
+      }
+    });
+  });
+  const conns = Object.values(seen);
+
+  const body = document.getElementById('ct-body');
+  body.scrollTop = 0;
+  body.innerHTML = '';
+
+  const wrap = document.createElement('div');
+  wrap.className = 'dp';
+  wrap.innerHTML = `
+    <div class="dp-l">${n.l}</div>
+    <div class="dp-alias">${n.a}</div>
+    <div class="dp-n">${n.n.toUpperCase()}</div>
+    <div class="dp-sep"></div>
+    <div class="dp-body">${n.b}</div>
+    <div class="sec-lbl">// tags — click para navegar el rizoma →</div>
+    <div class="tags" id="tags-wrap"></div>
+    <div class="conn-lbl">// mesetas conectadas (${conns.length})</div>
+    <div class="conns" id="conns-wrap"></div>`;
+  body.appendChild(wrap);
+
+  document.getElementById('tags-wrap') && (() => {
+    const tw = document.getElementById('tags-wrap');
+    n.t.forEach(tag => {
+      const btn = document.createElement('button');
+      btn.className = 'tag';
+      btn.textContent = tag;
+      btn.addEventListener('click', () => {
+        navHistory.push({ type: 'node', idx });
+        showTag(tag);
+      });
+      tw.appendChild(btn);
+    });
+  })();
+
+  const cw = document.getElementById('conns-wrap');
+  conns.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'conn-btn';
+    btn.innerHTML = `
+      <span class="conn-l">${DATA[c.idx].l}</span>
+      <span>${DATA[c.idx].n}</span>
+      <span class="conn-via">via: ${c.via[0]}${c.via.length > 1 ? ' +' + (c.via.length - 1) : ''}</span>`;
+    btn.addEventListener('click', () => showNode(c.idx));
+    cw.appendChild(btn);
+  });
+}
+
+function showTag(tag) {
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('on'));
+
+  const hits = RZ[tag] || [];
+  document.getElementById('bc').innerHTML =
+    `<span>NETIANAS.NET</span> / tag: <span style="color:var(--cyan)">${tag}</span>`;
+
+  const body = document.getElementById('ct-body');
+  body.scrollTop = 0;
+  body.innerHTML = '';
+
+  const container = document.createElement('div');
+  container.className = 'tr';
+
+  const backBtn = document.createElement('button');
+  backBtn.className = 'tr-back';
+  backBtn.textContent = '← volver';
+  backBtn.addEventListener('click', () => {
+    if (navHistory.length > 0) {
+      const prev = navHistory.pop();
+      if (prev.type === 'node') showNode(prev.idx);
+      else goHome();
+    } else {
+      goHome();
+    }
+  });
+
+  const head = document.createElement('div');
+  head.className = 'tr-head';
+  head.innerHTML = `
+    <div class="tr-title">→ ${tag}</div>
+    <div class="tr-sub">${hits.length} meseta${hits.length !== 1 ? 's' : ''} conectadas por este nodo rizomático</div>`;
+
+  const list = document.createElement('div');
+  list.className = 'tr-list';
+  hits.forEach(i => {
+    const node = document.createElement('div');
+    node.className = 'tr-node';
+    node.innerHTML = `
+      <span class="tr-l">${DATA[i].l}</span>
+      <div>
+        <div class="tr-n">${DATA[i].n}</div>
+        <div class="tr-d">${DATA[i].d}</div>
+      </div>`;
+    node.addEventListener('click', () => showNode(i));
+    list.appendChild(node);
+  });
+
+  container.appendChild(backBtn);
+  container.appendChild(head);
+  container.appendChild(list);
+  body.appendChild(container);
+}
+
+/* ══════════════════════════════════════
+   MOBILE
+══════════════════════════════════════ */
+let mobHomeBuilt = false;
+let mobCurrentIdx = null;
+
+function buildMobHome() {
+  if (mobHomeBuilt) return;
+  mobHomeBuilt = true;
+  const grid = document.getElementById('mob-home');
+  DATA.forEach((n, i) => {
+    const el = document.createElement('div');
+    el.className = 'mob-hg-node';
+    el.innerHTML = `
+      <div class="mob-hg-l">${n.l}</div>
+      <div class="mob-hg-alias">${n.a}</div>
+      <div class="mob-hg-name">${n.n}</div>`;
+    el.addEventListener('click', () => mobShowDetail(i));
+    grid.appendChild(el);
+  });
+}
+
+function mobShowHome() {
+  buildMobHome();
+  document.getElementById('mob-home').style.display = 'grid';
+  document.getElementById('mob-detail').classList.remove('on');
+  mobCurrentIdx = null;
+}
+
+function mobGoHome() {
+  mobShowHome();
+}
+
+function mobShowDetail(idx) {
+  mobCurrentIdx = idx;
+  document.getElementById('mob-home').style.display = 'none';
+  document.getElementById('mob-detail').classList.add('on');
+  renderMobDetail(idx, null);
+}
+
+function renderMobDetail(idx, prevIdx) {
+  const n = DATA[idx];
+  const seen = {};
+  n.t.forEach(tag => {
+    (RZ[tag] || []).forEach(ci => {
+      if (ci !== idx) {
+        if (!seen[ci]) seen[ci] = { idx: ci, via: [] };
+        seen[ci].via.push(tag);
+      }
+    });
+  });
+  const conns = Object.values(seen);
+
+  const body = document.getElementById('mob-detail-body');
+  body.scrollTop = 0;
+  body.innerHTML = '';
+
+  const wrap = document.createElement('div');
+
+  // letter, alias, name
+  wrap.innerHTML = `
+    <div class="mob-dp-l">${n.l}</div>
+    <div class="mob-dp-alias">${n.a}</div>
+    <div class="mob-dp-n">${n.n.toUpperCase()}</div>
+    <div class="mob-dp-sep"></div>
+    <div class="mob-dp-body">${n.b}</div>
+    <div class="mob-sec-lbl">// tags →</div>`;
+
+  const tagsDiv = document.createElement('div');
+  tagsDiv.className = 'mob-tags';
+  n.t.forEach(tag => {
+    const btn = document.createElement('button');
+    btn.className = 'mob-tag';
+    btn.textContent = tag;
+    btn.addEventListener('click', () => openOv(tag));
+    tagsDiv.appendChild(btn);
+  });
+  wrap.appendChild(tagsDiv);
+
+  const connLbl = document.createElement('div');
+  connLbl.className = 'mob-conn-lbl';
+  connLbl.textContent = `// mesetas conectadas (${conns.length})`;
+  wrap.appendChild(connLbl);
+
+  const connsDiv = document.createElement('div');
+  connsDiv.className = 'mob-conns';
+  conns.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'mob-conn-btn';
+    btn.innerHTML = `
+      <span class="mob-conn-l">${DATA[c.idx].l}</span>
+      <span>${DATA[c.idx].n}</span>
+      <span class="mob-conn-via">via: ${c.via[0]}</span>`;
+    btn.addEventListener('click', () => renderMobDetail(c.idx, idx));
+    connsDiv.appendChild(btn);
+  });
+  wrap.appendChild(connsDiv);
+
+  body.appendChild(wrap);
+}
+
+function openOv(tag) {
+  const hits = RZ[tag] || [];
+  document.getElementById('mo-title').textContent = '→ ' + tag;
+  document.getElementById('mo-sub').textContent =
+    hits.length + ' meseta' + (hits.length !== 1 ? 's' : '') + ' conectadas';
+
+  const list = document.getElementById('mo-list');
+  list.innerHTML = '';
+  hits.forEach(i => {
+    const node = document.createElement('div');
+    node.className = 'mo-node';
+    node.innerHTML = `
+      <span class="mo-l">${DATA[i].l}</span>
+      <div>
+        <div class="mo-n">${DATA[i].n}</div>
+        <div class="mo-d">${DATA[i].d}</div>
+      </div>`;
+    node.addEventListener('click', () => {
+      closeOv();
+      setTimeout(() => renderMobDetail(i, mobCurrentIdx), 150);
+    });
+    list.appendChild(node);
+  });
+
+  document.getElementById('mob-ov').classList.add('on');
+}
+
+function closeOv() {
+  document.getElementById('mob-ov').classList.remove('on');
+}
+</script>
+</body>
+</html>
