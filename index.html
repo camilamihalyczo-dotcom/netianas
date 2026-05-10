@@ -1391,6 +1391,20 @@ function renderMobDetail(idx, prevIdx) {
   connLbl.textContent = `// mesetas conectadas (${conns.length})`;
   wrap.appendChild(connLbl);
 
+  // ── REFERENTES mobile ──
+  const mobRefLbl = document.createElement('div');
+  mobRefLbl.className = 'mob-ref-lbl';
+  mobRefLbl.textContent = '// referentes →';
+  wrap.appendChild(mobRefLbl);
+
+  const mobRefGrid = document.createElement('div');
+  mobRefGrid.className = 'mob-ref-grid';
+  const mobRefExp = document.createElement('div');
+  mobRefExp.className = 'mob-ref-expanded';
+  wrap.appendChild(mobRefGrid);
+  wrap.appendChild(mobRefExp);
+  buildMobRefGrid(mobRefGrid, mobRefExp);
+
   const connsDiv = document.createElement('div');
   connsDiv.className = 'mob-conns';
   conns.forEach(c => {
@@ -1406,6 +1420,102 @@ function renderMobDetail(idx, prevIdx) {
   wrap.appendChild(connsDiv);
 
   body.appendChild(wrap);
+}
+
+/* ══════════════════════════════════════
+   REFERENTES — shared builder
+══════════════════════════════════════ */
+
+// Placeholder data — 4 slots per netiana, ready to fill
+const REF_PLACEHOLDER = [
+  { title: "debe ir el título",    sub: "subtítulo / año",   body: "texto texto texto" },
+  { title: "debe ir el título",    sub: "subtítulo / año",   body: "texto texto texto" },
+  { title: "debe ir el título",    sub: "subtítulo / año",   body: "texto texto texto" },
+  { title: "debe ir el título",    sub: "subtítulo / año",   body: "texto texto texto" },
+];
+
+function buildRefGrid(gridEl, expandedEl) {
+  let openIdx = null;
+
+  // close button
+  expandedEl.querySelector('.ref-exp-close')
+    .addEventListener('click', () => {
+      expandedEl.classList.remove('on');
+      gridEl.querySelectorAll('.ref-card').forEach(c => c.classList.remove('open'));
+      openIdx = null;
+    });
+
+  REF_PLACEHOLDER.forEach((ref, i) => {
+    const card = document.createElement('div');
+    card.className = 'ref-card';
+    card.innerHTML = `
+      <div class="ref-img">
+        <div class="ref-img-placeholder">
+          IMG<span>— pendiente —</span>
+        </div>
+      </div>
+      <div class="ref-card-label">${ref.title}</div>`;
+
+    card.addEventListener('click', () => {
+      if (openIdx === i) {
+        // toggle close
+        expandedEl.classList.remove('on');
+        card.classList.remove('open');
+        openIdx = null;
+        return;
+      }
+      // open this one
+      gridEl.querySelectorAll('.ref-card').forEach(c => c.classList.remove('open'));
+      card.classList.add('open');
+      expandedEl.querySelector('#ref-exp-title').textContent = ref.title;
+      expandedEl.querySelector('#ref-exp-sub').textContent   = ref.sub;
+      expandedEl.querySelector('#ref-exp-body').textContent  = ref.body;
+      expandedEl.classList.add('on');
+      openIdx = i;
+    });
+
+    gridEl.appendChild(card);
+  });
+}
+
+function buildMobRefGrid(gridEl, expandedEl) {
+  let openIdx = null;
+
+  REF_PLACEHOLDER.forEach((ref, i) => {
+    const card = document.createElement('div');
+    card.className = 'mob-ref-card';
+    card.innerHTML = `
+      <div class="mob-ref-img">
+        <div class="mob-ref-img-ph">IMG<span>— pendiente —</span></div>
+      </div>
+      <div class="mob-ref-label">${ref.title}</div>`;
+
+    card.addEventListener('click', () => {
+      if (openIdx === i) {
+        expandedEl.classList.remove('on');
+        card.classList.remove('open');
+        openIdx = null;
+        return;
+      }
+      gridEl.querySelectorAll('.mob-ref-card').forEach(c => c.classList.remove('open'));
+      card.classList.add('open');
+      expandedEl.innerHTML = `
+        <button class="mob-ref-exp-close">[ × CERRAR ]</button>
+        <div class="mob-ref-exp-title">${ref.title}</div>
+        <div class="mob-ref-exp-sub">${ref.sub}</div>
+        <div class="mob-ref-exp-body">${ref.body}</div>`;
+      expandedEl.querySelector('.mob-ref-exp-close')
+        .addEventListener('click', () => {
+          expandedEl.classList.remove('on');
+          card.classList.remove('open');
+          openIdx = null;
+        });
+      expandedEl.classList.add('on');
+      openIdx = i;
+    });
+
+    gridEl.appendChild(card);
+  });
 }
 
 function openOv(tag) {
