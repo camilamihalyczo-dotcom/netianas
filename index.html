@@ -627,6 +627,25 @@ body::after {
   color: var(--white); line-height: 1.8;
 }
 
+.ref-tag-link {
+  color: var(--cyan);
+  cursor: pointer;
+  font-size: inherit;
+  letter-spacing: 0.03em;
+  transition: color 0.1s;
+  font-family: inherit;
+}
+.ref-tag-link:hover { color: var(--mag); text-shadow: 0 0 6px var(--mag); }
+.ref-sub-plain { color: var(--gd); font-size: inherit; }
+
+.ref-exp-sub {
+  font-size: clamp(0.58rem, 1rem, 0.68rem);
+  color: var(--cyan);
+  letter-spacing: 0.06em;
+  margin-bottom: 0.6rem;
+  display: flex; flex-wrap: wrap; gap: 5px; align-items: center;
+}
+
 /* tag results */
 .tr { animation: fadein 0.2s ease; }
 .tr-head {
@@ -1238,7 +1257,7 @@ function showNode(idx) {
   })();
 
   // ── REFERENTES ──
-  buildRefGrid(document.getElementById('ref-grid'), document.getElementById('ref-expanded'));
+  buildRefGrid(document.getElementById('ref-grid'), document.getElementById('ref-expanded'), idx);
 
   const cw = document.getElementById('conns-wrap');
   conns.forEach(c => {
@@ -1403,7 +1422,7 @@ function renderMobDetail(idx, prevIdx) {
   mobRefExp.className = 'mob-ref-expanded';
   wrap.appendChild(mobRefGrid);
   wrap.appendChild(mobRefExp);
-  buildMobRefGrid(mobRefGrid, mobRefExp);
+  buildMobRefGrid(mobRefGrid, mobRefExp, idx);
 
   const connsDiv = document.createElement('div');
   connsDiv.className = 'mob-conns';
@@ -1423,21 +1442,238 @@ function renderMobDetail(idx, prevIdx) {
 }
 
 /* ══════════════════════════════════════
-   REFERENTES — shared builder
+   REFERENTES DATA
+   img: nombre de archivo en carpeta /img/
+   title, sub: array de strings (texto plano o "(tag)" clickeable)
+   body: texto descriptivo
 ══════════════════════════════════════ */
+const REFS = {
+  0: [ // A · Artivista
+    { img:"a-1-mujeres.jpg",  title:"Mujeres Públicas",
+      sub:["Argentina","(colectivo)","(latinoamericana)","2003–"],
+      body:"Intervenciones visuales feministas en espacio público y digital, apropiación del lenguaje publicitario y propagandístico." },
+    { img:"a-2-niunamenos.jpg", title:"#NiUnaMenos",
+      sub:["Argentina","(colectivo)","(latinoamericana)","2015–"],
+      body:"Como práctica de artivismo digital colectivo: el hashtag como obra distribuida, la red como territorio político." },
+    null, null
+  ],
+  1: [ // B · Buscadora
+    { img:"b-1-golder.jpg",   title:"Gabriela Golder",
+      sub:["Argentina","(latinoamericana)","(net.art)"],
+      body:"Net.art y videoarte, Postales — fragmentos íntimos dispersos en la red, búsqueda de presencia a través del archivo doméstico." },
+    { img:"b-2-yeregui.jpg",  title:"Mariela Yeregui",
+      sub:["Argentina","(latinoamericana)","(net.art)"],
+      body:"Arte interactivo y robótico, trabaja la pantalla como umbral entre presencia y ausencia." },
+    null, null
+  ],
+  2: [ // C · Cyborg
+    { img:"c-1-cheang.png",   title:"Shu Lea Cheang",
+      sub:["Taiwan/USA","(anglosajona)","(asiática)","(citada por Zafra)","(net.art)"],
+      body:"Mencionada por Zafra en \"Habitares reversibles\". Brandon (1998): cuerpo trans, código, identidad desdoblada en red." },
+    { img:"c-2-vesna.jpg",    title:"Victoria Vesna",
+      sub:["USA","(anglosajona)","(citada por Zafra)","(net.art)"],
+      body:"Bodies Incorporated: construir un cuerpo virtual eligiendo partes, materiales, sexo, sexualidad. Tres ambientes: LIMBO, NECROPOLIS, SHOWPLACE." },
+    { img:"c-3-moon.gif",     title:"Moon Ribas",
+      sub:[],
+      body:"\"La libertad de ser cyborgs\": La posibilidad de convertirse así misma en una mujer cibernética que construye sus piezas dancísticas y su identidad a partir de un acercamiento profundo a la naturaleza." },
+    { img:"c-4-hershman.jpg", title:"Lynn Hershman",
+      sub:["1995–1998"],
+      body:"The Dollie Clone Series." }
+  ],
+  3: [ // D · Doméstica
+    { img:"d-1-mouchette.jpg", title:"Mouchette",
+      sub:["Anónimo","1996–","(citada por Zafra)","(net.art)"],
+      body:"mouchette.org — ficción de una niña suicida de 13 años, donde artista y obra se fusionan. \"En la red no hay diferencia entre ser un artista o una obra de arte.\"" },
+    { img:"d-2-laguna.jpg",    title:"Fernanda Laguna",
+      sub:["Argentina","(latinoamericana)"],
+      body:"Trabajo sobre feminidad, domesticidad e identidad desde la práctica artística DIY y amateur." },
+    null, null
+  ],
+  4: [ // E · Esteganógrafa
+    { img:"e-1-olia.jpg",  title:"Olia Lialina",
+      sub:["Rusia","(asiática)","(citada por Zafra)","(ref. vista en clase)","(net.art)"],
+      body:"My Boyfriend Came Back from the War (1996): narrativa oculta en la estructura del HTML, lo que no se dice visible en el código." },
+    { img:"e-2-eva.jpg",   title:"0100101110101101.ORG",
+      sub:["Eva y Franco Mattes, Italia","(europea)","(ref. vista en clase)","(net.art)"],
+      body:"Hackeo de identidades corporativas, arte que se esconde dentro del sistema." },
+    null, null
+  ],
+  5: [ // F · Flâneuse
+    { img:"f-1-dzodan.jpg", title:"Flavia Dzodan",
+      sub:["Argentina","(latinoamericana)"],
+      body:"Escritura política y errante en la web, figura del sujeto que deambula los espacios digitales sin pertenecer a ninguno." },
+    null, null, null
+  ],
+  6: [ // G · Geek
+    { img:"g-1-sollfrank.jpg", title:"Cornelia Sollfrank",
+      sub:["Alemania","(europea)","(citada por Zafra)"],
+      body:"Female Extension (1997): hackeó un concurso de net.art generando 289 participantes femeninas falsas con software propio. Subversión del algoritmo desde adentro." },
+    { img:"g-2-moll.jpg",      title:"Joana Moll",
+      sub:["España","(europea)"],
+      body:"Artista de datos: visualiza el peso físico de internet, los cables, el consumo energético. La geek que lee las vísceras de la red." },
+    null, null
+  ],
+  7: [ // H · Hacktivista
+    { img:"h-1-meyers.jpg",    title:"Raquel Meyers",
+      sub:["España/Suecia","(europea)"],
+      body:"Arte en texto y caracteres ASCII, hackeo de las interfaces más básicas." },
+    { img:"h-2-donestech.jpg", title:"Donestech",
+      sub:["(colectivo)","(europea)"],
+      body:"Investigación y acción sobre mujeres, género y tecnologías libres. Hacktivismo feminista." },
+    null, null
+  ],
+  8: [ // I · Invisible
+    { img:"i-1-yofermina.jpg",  title:"Yofermina",
+      sub:["Argentina","(latinoamericana)","(creadora/comunicadora de contenido)"],
+      body:"Presencia online construida fragmento a fragmento, identidad que existe en la acumulación de lo menor." },
+    { img:"i-2-doragarcia.jpg", title:"Dora García",
+      sub:["España","(europea)","(citada por Zafra)"],
+      body:"Todas las historias (2001): aforismos distribuidos sin orden, presencia hecha de ausencias y silencios." },
+    null, null
+  ],
+  9: [ // J · Jinetera
+    { img:"j-1-bruguera.jpg", title:"Tania Bruguera",
+      sub:["Cuba","(latinoamericana)","(artista)","(performance)"],
+      body:"Arte político y performático que negocia constantemente los límites entre lo permitido y lo prohibido, cuerpo como moneda de cambio en el espacio público." },
+    { img:"j-2-galindo.jpg",  title:"Regina José Galindo",
+      sub:["Guatemala","(latinoamericana)","(artista)","(performance)"],
+      body:"Performance extrema sobre el cuerpo femenino como territorio de disputa política y violencia." },
+    null, null
+  ],
+  10: [ // K · Karaokista
+    { img:"k-1-tomic.jpg",  title:"Milica Tomić",
+      sub:["Serbia/Yugoslavia","(europea)","(citada por Zafra)"],
+      body:"I am Milica Tomić: video donde se presenta con afirmaciones contradictorias de identidad que le provocan heridas físicas en el rostro. La identidad como contradicción performativa." },
+    { img:"k-2-ahmed.jpg",  title:"Sara Ahmed",
+      sub:["Australia/UK","(anglosajona)","(escritora)","(profesora)"],
+      body:"Figura de killjoy feminista, la que interrumpe el discurso institucional desde adentro del mismo lenguaje." },
+    null, null
+  ],
+  11: [ // L · Lurker
+    { img:"l-1-gache.jpg", title:"Belén Gache",
+      sub:["Argentina","(latinoamericana)","(escritora)"],
+      body:"Escritura digital y poesía electrónica: Wordtoys — obra de etcéteras, listas que no se cierran nunca." },
+    { img:"l-2-vns.jpg",   title:"VNS Matrix",
+      sub:["Australia","(anglosajona)","(colectivo)","(citada por Zafra)","(ref. vista en clase)","(manifiesto)"],
+      body:"Cyberfeminist Manifesto: vagabundeo irónico por el ciberespacio, rechazo a todo mapa fijo. Fundadoras del ciberfeminismo como práctica artística." },
+    null, null
+  ],
+  12: [ // M · Multitud
+    { img:"m-1-mareaverde.jpg", title:"#AbortoLegalYa / marea verde",
+      sub:["Argentina","(latinoamericana)","(colectivo)","2018"],
+      body:"Como práctica de multitud en red: identidad colectiva sin centro, multiplicidad que actúa." },
+    { img:"m-2-pagola.jpg",     title:"Lila Pagola",
+      sub:["Argentina","(latinoamericana)","(profesora)"],
+      body:"Investigadora y artista de cultura libre, trabaja sobre producción colaborativa y procomún digital." },
+    null, null
+  ],
+  13: [ // N · Nómade
+    { img:"n-1-ullman.gif",  title:"Amalia Ulman",
+      sub:[],
+      body:"Ethira (2013) era una plataforma de redes sociales para iPhone que permitía a los usuarios publicar mensajes anónimos en un foro público, con la salvedad de que desaparecerían poco después de su publicación." },
+    { img:"n-2-taquini.jpg", title:"Graciela Taquini",
+      sub:["Argentina","(latinoamericana)","(artista)","(profesora)","(net.art)"],
+      body:"Video y net.art, trabaja sobre la obsolescencia de los medios y la memoria efímera de lo digital." },
+    null, null
+  ],
+};
 
-// Placeholder data — 4 slots per netiana, ready to fill
-const REF_PLACEHOLDER = [
-  { title: "debe ir el título",    sub: "subtítulo / año",   body: "texto texto texto" },
-  { title: "debe ir el título",    sub: "subtítulo / año",   body: "texto texto texto" },
-  { title: "debe ir el título",    sub: "subtítulo / año",   body: "texto texto texto" },
-  { title: "debe ir el título",    sub: "subtítulo / año",   body: "texto texto texto" },
-];
+// ── REF TAG MAP: tag → [ {netIdx, refIdx} ] ──
+const REF_TAG_MAP = {};
+function buildRefTagMap() {
+  Object.entries(REFS).forEach(([netIdx, refs]) => {
+    refs.forEach((ref, ri) => {
+      if (!ref) return;
+      ref.sub.forEach(s => {
+        const m = s.match(/^\((.+)\)$/);
+        if (m) {
+          const tag = m[1];
+          if (!REF_TAG_MAP[tag]) REF_TAG_MAP[tag] = [];
+          REF_TAG_MAP[tag].push({ netIdx: parseInt(netIdx), refIdx: ri, ref });
+        }
+      });
+    });
+  });
+}
+buildRefTagMap();
 
-function buildRefGrid(gridEl, expandedEl) {
+// ── RENDER SUBTITLE with clickable tags ──
+function renderSub(subArr) {
+  return subArr.map(s => {
+    const m = s.match(/^\((.+)\)$/);
+    if (m) {
+      return `<span class="ref-tag-link" data-tag="${m[1]}">(${m[1]})</span>`;
+    }
+    return `<span class="ref-sub-plain">${s}</span>`;
+  }).join(' ');
+}
+
+// ── SHOW REF TAG results (desktop) ──
+function showRefTag(tag) {
+  const hits = REF_TAG_MAP[tag] || [];
+  navHistory.push({ type: 'refTag', tag });
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('on'));
+  document.getElementById('bc').innerHTML =
+    `<span>NETIANAS.NET</span> / referentes / <span style="color:var(--cyan)">(${tag})</span>`;
+
+  const body = document.getElementById('ct-body');
+  body.scrollTop = 0;
+  body.innerHTML = '';
+
+  const wrap = document.createElement('div');
+  wrap.className = 'tr';
+
+  const backBtn = document.createElement('button');
+  backBtn.className = 'tr-back';
+  backBtn.textContent = '← volver';
+  backBtn.addEventListener('click', () => {
+    navHistory.pop();
+    if (navHistory.length > 0) {
+      const prev = navHistory[navHistory.length - 1];
+      navHistory.pop();
+      if (prev.type === 'node') showNode(prev.idx);
+      else goHome();
+    } else goHome();
+  });
+
+  const head = document.createElement('div');
+  head.className = 'tr-head';
+  head.innerHTML = `
+    <div class="tr-title">→ (${tag})</div>
+    <div class="tr-sub">${hits.length} referente${hits.length !== 1 ? 's' : ''} con este tag</div>`;
+
+  const list = document.createElement('div');
+  list.className = 'tr-list';
+
+  hits.forEach(({ netIdx, ref }) => {
+    const n = DATA[netIdx];
+    const node = document.createElement('div');
+    node.className = 'tr-node';
+    node.style.flexDirection = 'column';
+    node.innerHTML = `
+      <div style="display:flex;align-items:start;gap:.7rem;margin-bottom:.4rem;">
+        <span class="tr-l">${n.l}</span>
+        <div>
+          <div class="tr-n" style="color:var(--cyan)">${ref.title}</div>
+          <div class="tr-d" style="color:var(--magd);font-size:.55rem;">${n.a} · ${n.n}</div>
+        </div>
+      </div>
+      <div class="tr-d">${ref.body}</div>`;
+    node.addEventListener('click', () => showNode(netIdx));
+    list.appendChild(node);
+  });
+
+  wrap.appendChild(backBtn);
+  wrap.appendChild(head);
+  wrap.appendChild(list);
+  body.appendChild(wrap);
+}
+
+// ── BUILD REF GRID (desktop) ──
+function buildRefGrid(gridEl, expandedEl, netIdx) {
+  const refs = (REFS[netIdx] || []).filter(Boolean);
   let openIdx = null;
 
-  // close button
   expandedEl.querySelector('.ref-exp-close')
     .addEventListener('click', () => {
       expandedEl.classList.remove('on');
@@ -1445,48 +1681,98 @@ function buildRefGrid(gridEl, expandedEl) {
       openIdx = null;
     });
 
-  REF_PLACEHOLDER.forEach((ref, i) => {
+  if (refs.length === 0) {
+    gridEl.innerHTML = `<div style="font-size:.6rem;color:#002200;grid-column:1/-1;padding:.5rem 0;">// referentes pendientes</div>`;
+    return;
+  }
+
+  refs.forEach((ref, i) => {
     const card = document.createElement('div');
     card.className = 'ref-card';
     card.innerHTML = `
       <div class="ref-img">
-        <div class="ref-img-placeholder">
-          IMG<span>— pendiente —</span>
+        <img src="img/${ref.img}" alt="${ref.title}"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="ref-img-placeholder" style="display:none">
+          IMG<span>— ${ref.title} —</span>
         </div>
       </div>
       <div class="ref-card-label">${ref.title}</div>`;
 
     card.addEventListener('click', () => {
       if (openIdx === i) {
-        // toggle close
         expandedEl.classList.remove('on');
         card.classList.remove('open');
         openIdx = null;
         return;
       }
-      // open this one
       gridEl.querySelectorAll('.ref-card').forEach(c => c.classList.remove('open'));
       card.classList.add('open');
-      expandedEl.querySelector('#ref-exp-title').textContent = ref.title;
-      expandedEl.querySelector('#ref-exp-sub').textContent   = ref.sub;
-      expandedEl.querySelector('#ref-exp-body').textContent  = ref.body;
+
+      // build expanded content
+      const titleEl = expandedEl.querySelector('#ref-exp-title');
+      const subEl   = expandedEl.querySelector('#ref-exp-sub');
+      const bodyEl  = expandedEl.querySelector('#ref-exp-body');
+
+      titleEl.textContent = ref.title;
+      subEl.innerHTML = renderSub(ref.sub);
+      bodyEl.textContent = ref.body;
+
+      // full image in expanded
+      let imgEl = expandedEl.querySelector('.ref-exp-img-wrap');
+      if (!imgEl) {
+        imgEl = document.createElement('div');
+        imgEl.className = 'ref-exp-img-wrap';
+        expandedEl.insertBefore(imgEl, titleEl);
+      }
+      imgEl.innerHTML = `<img src="img/${ref.img}" alt="${ref.title}" style="max-width:100%;max-height:320px;object-fit:contain;filter:grayscale(20%) contrast(1.1);display:block;margin-bottom:.8rem;" onerror="this.style.display='none'">`;
+
+      // wire tag clicks
+      subEl.querySelectorAll('.ref-tag-link').forEach(el => {
+        el.addEventListener('click', e => {
+          e.stopPropagation();
+          navHistory.push({ type: 'node', idx: DATA.findIndex(d => d.l === (REFS[netIdx][0] || REFS[netIdx][i] || {}).l) });
+          showRefTag(el.dataset.tag);
+        });
+      });
+
       expandedEl.classList.add('on');
       openIdx = i;
+      expandedEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     });
 
     gridEl.appendChild(card);
   });
+
+  // fill empty slots up to 4
+  for (let i = refs.length; i < 4; i++) {
+    const empty = document.createElement('div');
+    empty.className = 'ref-card';
+    empty.style.opacity = '.2';
+    empty.style.cursor = 'default';
+    empty.innerHTML = `<div class="ref-img"><div class="ref-img-placeholder">—<span>pendiente</span></div></div><div class="ref-card-label">—</div>`;
+    gridEl.appendChild(empty);
+  }
 }
 
-function buildMobRefGrid(gridEl, expandedEl) {
+// ── BUILD MOB REF GRID ──
+function buildMobRefGrid(gridEl, expandedEl, netIdx) {
+  const refs = (REFS[netIdx] || []).filter(Boolean);
   let openIdx = null;
 
-  REF_PLACEHOLDER.forEach((ref, i) => {
+  if (refs.length === 0) {
+    gridEl.innerHTML = `<div style="font-size:.6rem;color:#002200;padding:.4rem 0;">// referentes pendientes</div>`;
+    return;
+  }
+
+  refs.forEach((ref, i) => {
     const card = document.createElement('div');
     card.className = 'mob-ref-card';
     card.innerHTML = `
       <div class="mob-ref-img">
-        <div class="mob-ref-img-ph">IMG<span>— pendiente —</span></div>
+        <img src="img/${ref.img}" alt="${ref.title}" style="width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(30%)"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="mob-ref-img-ph" style="display:none">IMG<span>— ${ref.title} —</span></div>
       </div>
       <div class="mob-ref-label">${ref.title}</div>`;
 
@@ -1499,23 +1785,58 @@ function buildMobRefGrid(gridEl, expandedEl) {
       }
       gridEl.querySelectorAll('.mob-ref-card').forEach(c => c.classList.remove('open'));
       card.classList.add('open');
+
       expandedEl.innerHTML = `
         <button class="mob-ref-exp-close">[ × CERRAR ]</button>
+        <img src="img/${ref.img}" alt="${ref.title}" style="max-width:100%;max-height:240px;object-fit:contain;display:block;margin-bottom:.7rem;filter:grayscale(20%)" onerror="this.style.display='none'">
         <div class="mob-ref-exp-title">${ref.title}</div>
-        <div class="mob-ref-exp-sub">${ref.sub}</div>
+        <div class="mob-ref-exp-sub" id="mob-ref-sub-${i}">${renderSub(ref.sub)}</div>
         <div class="mob-ref-exp-body">${ref.body}</div>`;
+
       expandedEl.querySelector('.mob-ref-exp-close')
         .addEventListener('click', () => {
           expandedEl.classList.remove('on');
           card.classList.remove('open');
           openIdx = null;
         });
+
+      // wire tag clicks in mobile
+      expandedEl.querySelectorAll('.ref-tag-link').forEach(el => {
+        el.addEventListener('click', e => {
+          e.stopPropagation();
+          openMobRefTag(el.dataset.tag);
+        });
+      });
+
       expandedEl.classList.add('on');
       openIdx = i;
     });
 
     gridEl.appendChild(card);
   });
+}
+
+// mobile ref tag overlay reuses mob-ov
+function openMobRefTag(tag) {
+  const hits = REF_TAG_MAP[tag] || [];
+  document.getElementById('mo-title').textContent = `→ (${tag})`;
+  document.getElementById('mo-sub').textContent = `${hits.length} referente${hits.length !== 1 ? 's' : ''} con este tag`;
+  const list = document.getElementById('mo-list');
+  list.innerHTML = '';
+  hits.forEach(({ netIdx, ref }) => {
+    const n = DATA[netIdx];
+    const node = document.createElement('div');
+    node.className = 'mo-node';
+    node.innerHTML = `
+      <span class="mo-l">${n.l}</span>
+      <div>
+        <div class="mo-n" style="color:var(--cyan)">${ref.title}</div>
+        <div class="mo-d">${n.a} · ${ref.body.substring(0, 60)}…</div>
+      </div>`;
+    node.addEventListener('click', () => { closeOv(); setTimeout(() => renderMobDetail(netIdx, mobCurrentIdx), 150); });
+    list.appendChild(node);
+  });
+  document.getElementById('mob-ov').classList.add('on');
 }
 
 function openOv(tag) {
