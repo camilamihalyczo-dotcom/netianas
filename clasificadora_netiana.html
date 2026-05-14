@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLASIFICADORA NETIANA</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
+:root{--black:#050505;--green:#00ff41;--gd:#00aa2a;--gf:#001200;--mag:#ff00ff;--magd:#880088;--cyan:#00ffff;--white:#e0ffe0;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;background:var(--black);color:var(--green);font-family:'Share Tech Mono',monospace;overflow:hidden;}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.08) 2px,rgba(0,0,0,.08) 4px);pointer-events:none;z-index:9000;}
+#scan{position:fixed;left:0;right:0;height:3px;background:linear-gradient(transparent,rgba(0,255,65,.08),transparent);pointer-events:none;z-index:8999;animation:sc 7s linear infinite;}
+@keyframes sc{0%{top:-2%}100%{top:102%}}
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes glitch{0%,88%,100%{transform:translate(0);clip-path:none}89%{transform:translate(-3px,1px);clip-path:inset(20% 0 50% 0)}91%{transform:translate(3px,-1px);clip-path:inset(60% 0 10% 0)}}
+
+#app{display:flex;flex-direction:column;height:100%;max-width:680px;margin:0 auto;}
+.hd{padding:.8rem 1.2rem .5rem;border-bottom:1px solid var(--gd);flex-shrink:0;}
+.hd-title{font-family:'VT323',monospace;font-size:clamp(1.8rem,5vw,2.6rem);color:var(--green);text-shadow:0 0 15px var(--green);animation:glitch 9s infinite;line-height:1;}
+.hd-title .mg{color:var(--mag);text-shadow:0 0 15px var(--mag);}
+.hd-sub{font-size:.58rem;color:var(--gd);letter-spacing:.12em;margin-top:3px;}
+.prog-bar{height:2px;background:var(--gf);flex-shrink:0;}
+.prog-fill{height:100%;background:var(--green);box-shadow:0 0 6px var(--green);transition:width .4s ease;width:0%;}
+.prog-txt{font-size:.5rem;color:var(--gd);padding:.3rem 1.2rem;letter-spacing:.1em;flex-shrink:0;display:flex;justify-content:space-between;}
+.main{flex:1;overflow-y:auto;padding:1.3rem 1.2rem;display:flex;flex-direction:column;scrollbar-width:thin;scrollbar-color:var(--gd) var(--black);}
+.main::-webkit-scrollbar{width:3px;}
+.main::-webkit-scrollbar-thumb{background:var(--gd);}
+
+.q-wrap{animation:fadein .22s ease;}
+.q-num{font-size:.52rem;color:var(--magd);letter-spacing:.15em;text-transform:uppercase;margin-bottom:.4rem;}
+.q-zafra{font-size:.6rem;color:#003300;letter-spacing:.04em;line-height:1.7;border-left:2px solid #002200;padding-left:.7rem;margin-bottom:.7rem;font-style:italic;}
+.q-text{font-family:'VT323',monospace;font-size:clamp(1.4rem,4vw,2rem);color:var(--white);line-height:1.25;margin-bottom:.4rem;}
+.q-hint{font-size:.6rem;color:var(--gd);line-height:1.6;margin-bottom:1.2rem;}
+.ans-wrap{display:flex;gap:.7rem;margin-bottom:1rem;}
+.ans-btn{flex:1;background:none;border:1px solid var(--gd);color:var(--green);font-family:'Share Tech Mono',monospace;font-size:clamp(.78rem,2.5vw,.92rem);padding:.7rem 1rem;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:all .1s;}
+.ans-btn.yes{border-color:var(--cyan);color:var(--cyan);}
+.ans-btn.yes:hover{box-shadow:0 0 14px rgba(0,255,255,.25);background:rgba(0,255,255,.04);}
+.ans-btn.no{border-color:var(--mag);color:var(--mag);}
+.ans-btn.no:hover{box-shadow:0 0 14px rgba(255,0,255,.25);background:rgba(255,0,255,.04);}
+.skip-btn{background:none;border:none;color:#002800;font-family:'Share Tech Mono',monospace;font-size:.54rem;cursor:pointer;letter-spacing:.08em;transition:color .1s;padding:.2rem 0;align-self:flex-start;}
+.skip-btn:hover{color:var(--gd);}
+
+.candidates{margin-top:1.1rem;border-top:1px solid var(--gf);padding-top:.8rem;}
+.cand-lbl{font-size:.48rem;color:#001a00;letter-spacing:.12em;margin-bottom:.5rem;}
+.score-row{display:flex;align-items:center;gap:.6rem;margin-bottom:5px;}
+.score-letter{font-family:'VT323',monospace;font-size:1rem;color:var(--magd);min-width:2.4rem;}
+.score-alias{font-size:.55rem;color:var(--gd);min-width:72px;}
+.score-bar-wrap{flex:1;height:5px;background:#001200;}
+.score-bar{height:100%;background:var(--gd);transition:width .5s ease;}
+.score-bar.top{background:var(--mag);box-shadow:0 0 5px var(--mag);}
+.score-val{font-size:.52rem;color:var(--gd);min-width:2.5rem;text-align:right;}
+
+.trail{margin-top:.8rem;border-top:1px solid var(--gf);padding-top:.6rem;}
+.trail-lbl{font-size:.46rem;color:#001800;letter-spacing:.12em;margin-bottom:.35rem;}
+.trail-item{font-size:.52rem;color:#002500;margin-bottom:2px;display:flex;gap:.5rem;}
+.trail-item .tq{flex:1;}
+.trail-item .ta{color:var(--gd);}
+
+.result-wrap{animation:fadein .3s ease;}
+.result-hdr{font-size:.52rem;color:var(--magd);letter-spacing:.2em;text-transform:uppercase;margin-bottom:.8rem;}
+.result-primary{border:1px solid var(--mag);border-top:3px solid var(--mag);background:#0d000d;padding:1.1rem;margin-bottom:.9rem;position:relative;}
+.result-primary::before{content:'MEJOR COINCIDENCIA';position:absolute;top:-.52rem;left:1rem;background:var(--black);padding:0 .5rem;font-size:.48rem;color:var(--magd);letter-spacing:.12em;}
+.r-letter{font-family:'VT323',monospace;font-size:3.5rem;color:var(--mag);text-shadow:0 0 15px var(--mag);line-height:1;}
+.r-alias{font-family:'VT323',monospace;font-size:1.9rem;color:var(--cyan);line-height:1.1;margin-bottom:.2rem;}
+.r-name{font-size:.66rem;color:var(--green);text-transform:uppercase;margin-bottom:.7rem;letter-spacing:.04em;}
+.r-sep{height:1px;background:linear-gradient(to right,var(--magd),transparent);margin-bottom:.7rem;}
+.r-why{font-size:.66rem;color:var(--white);line-height:1.85;}
+.r-zafra{font-size:.58rem;color:#004400;font-style:italic;border-left:2px solid #003300;padding-left:.6rem;margin-top:.7rem;line-height:1.65;}
+.all-scores{margin-top:.9rem;}
+.all-lbl{font-size:.48rem;color:#001a00;letter-spacing:.14em;text-transform:uppercase;margin-bottom:.5rem;}
+.restart-btn{margin-top:1.1rem;background:none;border:1px solid var(--green);color:var(--green);font-family:'Share Tech Mono',monospace;font-size:.7rem;padding:.62rem 1.1rem;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;transition:all .1s;width:100%;}
+.restart-btn:hover{border-color:var(--cyan);color:var(--cyan);}
+</style>
+</head>
+<body>
+<div id="scan"></div>
+<div id="app">
+  <div class="hd">
+    <div class="hd-title">CLASIFICADORA <span class="mg">NETIANA</span></div>
+    <div class="hd-sub">// sistema de identificación · basado en Zafra (2005) · responde sí o no</div>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
+  <div class="prog-txt"><span id="prog-label">pregunta 0 / 0</span><span id="prog-conf">confianza: —</span></div>
+  <div class="main" id="main"></div>
+</div>
+
+<script>
+const N={
+  A:{l:"(A)",a:"Artivista",    n:"Pertenecientes a Microsoft"},
+  B:{l:"(B)",a:"Buscadora",    n:"Latentes"},
+  C:{l:"(C)",a:"Cyborg",       n:"Inventadas"},
+  D:{l:"(D)",a:"Doméstica",    n:"Prosopon"},
+  E:{l:"(E)",a:"Esteganógrafa",n:"Cyborgs"},
+  F:{l:"(F)",a:"Flâneuse",     n:"«Fabulosas»"},
+  G:{l:"(G)",a:"Geek",         n:"Google"},
+  H:{l:"(H)",a:"Hacktivista",  n:"Incluidas en esta clasificación"},
+  I:{l:"(I)",a:"Invisible",    n:"Chateadoras compulsivas"},
+  J:{l:"(J)",a:"Jinetera",     n:"Incontables"},
+  K:{l:"(K)",a:"Karaokista",   n:"Descritas en Times New Roman"},
+  L:{l:"(L)",a:"Lurker",       n:"Etcétera"},
+  M:{l:"(M)",a:"Multitud",     n:"Que entran en Silicon Valley"},
+  N:{l:"(N)",a:"Nómade",       n:"Que viven lo que una mosca"},
+};
+
+const REASONS={
+  A:{why:"Lee esteganográficamente el poder oculto en las tecnologías. No es una infiltrada externa sino un elemento distorsionador que surge del limen del mismo sistema que critica — y desde ahí lo subvierte.",zafra:"«Las netianas deben hacer visible lo escondido y subvertirlo. Un sujeto cultivado donde crece lo que nos mata, desde ese lugar privilegiado puede leer lo ilegible.» — Zafra, Netianas (2005)"},
+  B:{why:"La pantalla como jardín secreto para el alma. Habita la red como espacio contemplativo y solitario para el cuerpo — un hogar íntimo donde el exceso de virtualidad convive con la búsqueda de lo real.",zafra:"«En este jardín secreto que proyectamos en la pantalla, donde pareciera que reubicamos los antiguos espacios de rezo y búsqueda interior, toman forma unas nuevas santas, inmateriales, latentes netianas.» — Zafra"},
+  C:{why:"No se nace así: se deviene. Ficción producida en el mismo territorio del discurso que pretende modificar. Opera desde la desidentificación con las normas reguladoras de la identidad sexual.",zafra:"«No se nace netiana, se hace netiana. Las netianas inventadas son ficciones y, como tales, su sentido está profundamente imbricado con el momento en que se inventan.» — Zafra"},
+  D:{why:"Artista y obra confluyen en un prosopon virtual. El yo-en-red como sello identitario que se ofrece a la mirada del otro — máscara que puede ser a la vez escenario y detrás del escenario.",zafra:"«En la red no hay diferencia entre ser un artista o una obra de arte. En Internet nadie sabe exactamente lo que yo significa.» — Mouchette, citada por Zafra"},
+  E:{why:"Heredera del cyborg de Haraway: híbrido físico y textual, cuerpo-máquina. Opera en la frontera entre lo orgánico y lo digital con ironía, parcialidad y perversidad política.",zafra:"«El cyborg es materia de ficción y experiencia viva. Las fronteras entre ciencia ficción y realidad social son una ilusión óptica.» — Haraway, citada por Zafra"},
+  F:{why:"Netiana «fabulosa» que conoce la trampa y la nombra. Observa irónicamente cómo la red puede ser tanto herramienta de emancipación como nueva jaula digital para la mujer.",zafra:"«Para no ser irónicamente fabulosas, las netianas no pueden obviar la continua reconstrucción de los géneros mediante la asignación laboral y doméstica propia de los sistemas económicos.» — Zafra"},
+  G:{why:"«Es» quien «está en Google»: fragmentada, parcial, discontinua. Piezas de un mosaico sin modelo ni imagen — solo recorridos de lectura sugeridos por el algoritmo que la produce.",zafra:"«El número de registros Google se convierte cada vez más en un indicativo del ser en el mundo. Corremos el riesgo de considerar que los parámetros de búsqueda son la nueva objetividad.» — Zafra"},
+  H:{why:"Habita la interfaz topológica y temporalmente. Usa estrategias de injertos, recontextualización y autocreación — la pantalla como pleura donde interseccionan el pasado y el futuro.",zafra:"«Las netianas incluidas en esta clasificación habitan en la interfaz. En este territorio la pantalla misma actúa como un revestimiento cerebral.» — Zafra"},
+  I:{why:"Chateadora compulsiva: pasa más tiempo siendo otra que siendo ella misma. La identidad prolifera, se multiplica, se contradice. El tiempo de conexión supera al tiempo offline.",zafra:"«Sin que lo sospeche, se le escapa en cada crisis una pequeña parte de su duración. Las ausencias pasan desapercibidas para quienes nos rodean.» — Virilio, citado por Zafra"},
+  J:{why:"Incontable, multiplicidad como resistencia. Se desplaza estratégicamente entre espacios — ningún sistema de conteo puede capturarla del todo. La jinetera que siempre encuentra otro camino.",zafra:"«En un devenir-animal siempre se está ante una manada, una banda, una población, en resumen, una multiplicidad.» — Deleuze y Guattari, citados por Zafra"},
+  K:{why:"Descrita en Times New Roman: su existencia necesita ser validada por el discurso académico o institucional para poder existir. La forma es el contenido ideológico.",zafra:"«El poder tiene género y los mecanismos mediante los que se establece esta determinación son los mismos por los que se condiciona a los sujetos como productores.» — Zafra"},
+  L:{why:"El etcétera como apertura radical — siempre hay algo más. Listas que no se cierran, archivos que se acumulan, observación sin intervención directa. La testigo que todo lo registra.",zafra:"«Cualquier cosa puede servir, pero el asunto se revela político. Un desvío y entonces un nuevo destino.» — Deleuze y Guattari, citados por Zafra"},
+  M:{why:"La que entró en Silicon Valley y descubrió que el garaje era solo de chicos. Presencia que normaliza sin transformar — excepción que confirma la regla del poder con género.",zafra:"«La situación actual de las mujeres es su integración/explotación en un sistema mundial de producción/reproducción y de comunicación llamado informática de la dominación.» — Haraway, citada por Zafra"},
+  N:{why:"Vive lo que una mosca. Efímera duración de las identidades online — devenir-animal, devenir-molecular. Una netiana de hace unos meses ya no está a la moda.",zafra:"«Devenir netiana nos arrastra, se vale del contagio y la epidemia on line de los seres híbridos y estériles.» — Zafra"},
+};
+
+// PREGUNTAS: yes/no dan puntos fuertes a pocas netianas, deja neutras al resto
+// Esto crea separación real — no hay "puntos para todos"
+const Q=[
+  {
+    z:"«Las netianas pertenecientes a Microsoft surgen en el limen del mismo sistema — no son infiltradas externas sino elementos distorsionadores que leen esteganográficamente el poder oculto.»",
+    q:"¿Lee e interviene el poder desde adentro del mismo sistema que critica?",
+    h:"No viene de afuera como saboteadora — nace dentro del entorno hegemónico y lo subvierte desde su limen.",
+    yes:{A:10,H:5,K:4},no:{B:6,L:6,N:5}
+  },
+  {
+    z:"«La pantalla actúa como un jardín secreto donde podemos permitirnos ser más auténticos que lo que la vida off line permite — espacio de búsqueda interior, casi místico.»",
+    q:"¿La red funciona para ella como jardín secreto, refugio íntimo o espacio de búsqueda interior?",
+    h:"Busca en la pantalla un hogar espiritual — no acción política, sino descanso del cuerpo y sus imposiciones.",
+    yes:{B:10,D:5,I:4},no:{A:5,H:5,J:5,G:4}
+  },
+  {
+    z:"«No se nace netiana, se hace netiana — las netianas inventadas son ficción producida en el mismo territorio del discurso que pretenden modificar.»",
+    q:"¿Su identidad o práctica es deliberadamente construida, reinventada o performativa?",
+    h:"No expresa una identidad natural — la construye, la actúa, la reinventa como estrategia crítica.",
+    yes:{C:10,D:6,H:5},no:{B:5,L:6,M:4}
+  },
+  {
+    z:"«Mouchette: en la red no hay diferencia entre ser artista o una obra de arte — artista y obra, sujeto y canal confluyen en el prosopon virtual.»",
+    q:"¿Es simultáneamente sujeto y obra — su persona es el material artístico principal?",
+    h:"Su cuerpo, identidad o figura es la materia misma de su práctica, no solo su instrumento.",
+    yes:{D:10,C:5,I:4},no:{G:5,K:5,L:5,A:4}
+  },
+  {
+    z:"«El cyborg es un organismo cibernético, híbrido de máquina y organismo. Haraway redefine la subjetividad femenina como cyborg — una posición política, no una metáfora inocente.»",
+    q:"¿Trabaja explícitamente con la fusión entre cuerpo orgánico y tecnología — el híbrido como posición?",
+    h:"Cyborg, posthumano, prótesis, cuerpo-código — el híbrido no como tema sino como posicionamiento.",
+    yes:{E:11,C:5,H:3},no:{B:5,K:5,L:5,F:4}
+  },
+  {
+    z:"«La netiana fabulosa conoce la trampa: la red puede ser tanto herramienta de emancipación como nueva jaula digital. La doble jornada, el teletrabajo, la mujer que vuelve a casa.»",
+    q:"¿Su práctica revela o critica la trampa de la doble jornada femenina o el teletrabajo como nueva jaula?",
+    h:"No solo critica el género — nombra cómo el trabajo doméstico y digital se superponen para atrapar a la mujer.",
+    yes:{F:11,M:6,K:4},no:{H:4,E:4,J:5,G:4}
+  },
+  {
+    z:"«La netiana Google es quien está en Google: fragmentada, parcial, discontinua. El número de registros se convierte en indicativo del ser en el mundo — lo que no aparece no existe.»",
+    q:"¿Su existencia depende de la visibilidad algorítmica, el perfil de datos o la lógica del buscador?",
+    h:"Existe porque aparece en métricas, búsquedas, bases de datos — el algoritmo la produce y la define.",
+    yes:{G:11,I:5,N:4},no:{B:5,E:4,L:6,J:4}
+  },
+  {
+    z:"«Las netianas incluidas en esta clasificación habitan la interfaz — la pantalla como pleura donde interseccionan el pasado y el futuro, lo interior y lo exterior.»",
+    q:"¿Habita la interfaz como territorio de vida — no como herramienta sino como hábitat mismo?",
+    h:"La red no es un medio para otra cosa — es el espacio donde se produce, existe y se constituye.",
+    yes:{H:10,G:5,I:5,D:3},no:{F:5,J:5,K:4,M:4}
+  },
+  {
+    z:"«En un devenir-animal siempre se está ante una manada, una multiplicidad. El devenir netiana se vale del contagio y la epidemia on line.»",
+    q:"¿Su práctica implica desplazamiento estratégico entre espacios, plataformas o identidades?",
+    h:"No tiene lugar fijo — se mueve, migra, cambia de registro o contexto según la necesidad.",
+    yes:{J:10,N:8,G:3},no:{B:5,D:5,K:5,A:4}
+  },
+  {
+    z:"«La materialidad del cuerpo no es estática — la práctica reguladora produce los cuerpos que gobierna. Butler: la performatividad de las normas reguladoras del sexo.»",
+    q:"¿Trabaja con la deconstrucción de la identidad de género como norma regulatoria — no como esencia?",
+    h:"El género no es natural — lo trabaja como construcción, performance, regulación que puede subvertirse.",
+    yes:{C:11,E:5,H:5},no:{G:5,M:5,K:4}
+  },
+  {
+    z:"«El poder tiene género. Microsoft, como el resto de la industria informática, produce desde ideologías dominantes que circulan en las estructuras más subterráneas de nuestros sistemas tecnológicos.»",
+    q:"¿Su práctica señala explícitamente el vínculo entre tecnología, capitalismo y patriarcado?",
+    h:"No solo critica el sexismo — rastrea cómo el poder económico y tecnológico produce y mantiene las desigualdades.",
+    yes:{A:10,M:8,F:5},no:{B:5,D:4,I:4,L:5}
+  },
+  {
+    z:"«Los chateadores pueden pasar más tiempo siendo otros que ellos mismos. La identidad prolifera, se contradice, se multiplica en guerras chat, experimentos BLOG, webcams.»",
+    q:"¿Su práctica implica multiplicación de identidades simultáneas o consecutivas en la red?",
+    h:"No tiene una sola voz online — se desdobla, prolifera, se contradice a sí misma constantemente.",
+    yes:{I:11,C:5,N:5},no:{A:5,K:5,M:4,E:3}
+  },
+  {
+    z:"«La esteganografía: ciencia que estudia los procedimientos encaminados a ocultar la existencia de un mensaje en lugar de ocultar su contenido. Las netianas leen lo ilegible.»",
+    q:"¿Oculta su mensaje dentro de otro — trabaja con lo cifrado, lo velado o lo que pasa desapercibido?",
+    h:"No dice lo que critica directamente — lo esconde dentro de algo que parece neutro o inocente.",
+    yes:{E:10,A:6,H:4},no:{J:5,M:5,I:4,F:3}
+  },
+  {
+    z:"«Ada Lovelace, primera programadora — eclipsada por la fama de su padre. La mujer con conocimiento técnico profundo que la industria tecnológica ha preferido ignorar.»",
+    q:"¿Tiene conocimiento técnico profundo del sistema digital — programa, hackea o construye herramientas?",
+    h:"No solo usa la tecnología — la conoce desde adentro, la programa, la transforma técnicamente.",
+    yes:{G:10,H:7,A:5},no:{B:6,D:5,F:5,K:4}
+  },
+  {
+    z:"«Las netianas etcétera: siempre hay algo más — la lista nunca termina. El etcétera como apertura radical que impide el cierre de toda taxonomía.»",
+    q:"¿Observa y acumula sin intervenir activamente — su práctica es de testigo, registradora o lurker?",
+    h:"Lurk, deriva, registra desde la periferia — no interrumpe ni toma la palabra directamente.",
+    yes:{L:11,B:5,F:5},no:{A:6,H:6,J:5,M:5}
+  },
+  {
+    z:"«Faith Wilding mostró a tiempo real y con todo lujo de detalles las mismas escenas del trabajo en el hogar — la representación reiterada, cansina e intencionalmente monótona del trabajo invisible.»",
+    q:"¿Su práctica hace visible el trabajo no remunerado, el cuidado o la producción invisible de las mujeres?",
+    h:"Saca a la luz lo que no se cuenta como trabajo — lo doméstico, el cuidado, lo que se da por hecho.",
+    yes:{F:8,K:7,M:6,J:4},no:{G:5,H:5,E:4,B:4}
+  },
+  {
+    z:"«Una netiana de hace unos meses deja de estar a la moda a la velocidad con que se imponen las nuevas versiones — devenir-mosca, devenir-molecular.»",
+    q:"¿Su práctica aborda la obsolescencia, lo efímero o la identidad que desaparece rápidamente?",
+    h:"Medios muertos, perfiles borrados, identidades que caducan — la fragilidad de todo lo digital.",
+    yes:{N:11,L:6,B:4},no:{A:5,G:4,K:5,H:4}
+  },
+  {
+    z:"«#NiUnaMenos, Mujeres Públicas: el hashtag como obra distribuida — la red como territorio político de emergencia colectiva, sin autoría individual clara.»",
+    q:"¿Su práctica opera a escala colectiva o de movimiento — sin autoría individual reconocible?",
+    h:"No es una práctica individual — es colectivo, campaña, movimiento, acción sin firma propia.",
+    yes:{M:10,J:6,A:5},no:{B:6,D:6,L:5,G:4}
+  },
+  {
+    z:"«La mujer en Silicon Valley ingresa como anomalía, se queda como excepción que confirma la regla. Su presencia normaliza sin transformar — el poder le da entrada para no cambiar.»",
+    q:"¿Trabaja dentro de instituciones de poder desde una posición de excepción que no transforma la estructura?",
+    h:"Está adentro del sistema de poder — academia, industria tech, medios — pero como figura excepcional.",
+    yes:{M:10,K:7,A:5},no:{C:5,J:6,N:5,B:4}
+  },
+  {
+    z:"«Mouchette: soy una artista o quizás soy un proyecto artístico. El yo tendría más que ver con una nueva forma de prosopon virtual que con la niña de sus fotos.»",
+    q:"¿Usa el anonimato, el alias o una identidad ficticia como núcleo de su práctica?",
+    h:"No opera con su nombre real — trabaja desde un personaje, una máscara, un alias construido deliberadamente.",
+    yes:{D:10,I:6,H:5,C:4},no:{M:5,K:5,G:4,F:4}
+  },
+  {
+    z:"«Braidotti: la gnoseología nómade como forma de resistencia al microfascismo — distanciamiento cualitativo de la hegemonía aunque solo tenga alcance local.»",
+    q:"¿Su práctica es nómade — migra entre soportes, plataformas o formatos de manera constante?",
+    h:"No tiene un medio fijo — cambia de soporte, plataforma o contexto según lo que necesite resistir.",
+    yes:{N:10,J:7,G:4},no:{K:6,D:5,B:5,M:4}
+  },
+  {
+    z:"«La ironía subversiva en combinación con las experiencias vitales de las mujeres puede sugerir estrategias para una acción política eficaz y creativa en el mundo en red.»",
+    q:"¿Usa la ironía, la parodia o el humor crítico como estrategia política central?",
+    h:"No confronta de frente — usa la inversión irónica, la cita paródica, el giro humorístico como arma.",
+    yes:{F:9,H:6,K:6,L:4},no:{E:4,J:5,B:4,N:4}
+  },
+  {
+    z:"«VNS Matrix: Cyberfeminist Manifesto — rechazo a todo mapa fijo. El virus como figura política, la red como territorio sin dueño ni jerarquía.»",
+    q:"¿Su práctica rechaza toda clasificación, centro o mapa fijo — escapa a cualquier taxonomía?",
+    h:"No se deja definir — su obra siempre excede la categoría que le imponen.",
+    yes:{F:10,J:6,N:5,C:4},no:{K:6,M:5,A:4,G:4}
+  },
+  {
+    z:"«La ansiedad del que revisa compulsivamente su buzón, del que espera, del que ansía que amanezca para conectarse de nuevo — peregrina por los cibercafés para enviar señales de que sigue ahí.»",
+    q:"¿Su presencia online es compulsiva, ansiosa o excesiva — necesita estar constantemente conectada?",
+    h:"Revisar, esperar, peregrinar entre plataformas — la ansiedad de la conexión como modo de existir.",
+    yes:{I:11,B:4,D:4},no:{L:7,G:4,M:4,K:4}
+  },
+];
+
+let scores={},qi=0,trail=[];
+
+function init(){Object.keys(N).forEach(k=>scores[k]=0);qi=0;trail=[];render();}
+
+function answer(val){
+  const q=Q[qi];
+  const map=val==='yes'?q.yes:q.no;
+  trail.push({q:q.q,a:val});
+  Object.entries(map).forEach(([k,pts])=>{scores[k]=(scores[k]||0)+pts;});
+  qi++;
+  if(qi>=10){
+    const s=getSorted();
+    const total=Object.values(scores).reduce((a,b)=>a+b,0);
+    const conf=total>0?Math.round((s[0].score/total)*100):0;
+    const gap=s[0].score-s[1].score;
+    if(gap>=20&&qi>=12){showResult();return;}
+    if(gap>=30){showResult();return;}
+  }
+  if(qi>=Q.length){showResult();return;}
+  render();
+}
+
+function skip(){qi++;if(qi>=Q.length){showResult();return;}render();}
+
+function getSorted(){return Object.entries(scores).map(([k,v])=>({key:k,score:v})).sort((a,b)=>b.score-a.score);}
+function getConf(){const s=getSorted();const total=Object.values(scores).reduce((a,b)=>a+b,0);return total>0?Math.round((s[0].score/total)*100):0;}
+
+function render(){
+  const q=Q[qi];
+  const pct=Math.round((qi/Q.length)*100);
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-label').textContent=`pregunta ${qi+1} / ${Q.length}`;
+  document.getElementById('prog-conf').textContent=qi>0?`confianza: ${getConf()}%`:'confianza: —';
+  const main=document.getElementById('main');
+  main.innerHTML='';
+  const w=document.createElement('div');
+  w.className='q-wrap';
+  w.innerHTML=`
+    <div class="q-num">// PREGUNTA ${String(qi+1).padStart(2,'0')} de ${Q.length}</div>
+    ${q.z?`<div class="q-zafra">${q.z}</div>`:''}
+    <div class="q-text">${q.q}</div>
+    ${q.h?`<div class="q-hint">${q.h}</div>`:''}
+    <div class="ans-wrap">
+      <button class="ans-btn yes" id="btn-y">SÍ →</button>
+      <button class="ans-btn no"  id="btn-n">NO →</button>
+    </div>
+    <button class="skip-btn" id="btn-s">[ no sé / saltar ]</button>`;
+
+  if(qi>=5){
+    const s=getSorted();const max=s[0].score||1;
+    const cDiv=document.createElement('div');
+    cDiv.className='candidates';
+    cDiv.innerHTML=`<div class="cand-lbl">// candidatas activas</div>`;
+    s.slice(0,5).forEach(({key,score},i)=>{
+      const nn=N[key];const p=Math.round((score/max)*100);
+      const row=document.createElement('div');row.className='score-row';
+      row.innerHTML=`<span class="score-letter">${nn.l}</span><span class="score-alias">${nn.a}</span><div class="score-bar-wrap"><div class="score-bar ${i===0?'top':''}" style="width:${p}%"></div></div><span class="score-val">${score}pts</span>`;
+      cDiv.appendChild(row);
+    });
+    w.appendChild(cDiv);
+  }
+
+  if(trail.length>0){
+    const tDiv=document.createElement('div');
+    tDiv.className='trail';tDiv.innerHTML=`<div class="trail-lbl">// recorrido</div>`;
+    trail.slice(-4).forEach(t=>{
+      const ti=document.createElement('div');ti.className='trail-item';
+      ti.innerHTML=`<span class="tq">${t.q.substring(0,55)}${t.q.length>55?'…':''}</span><span class="ta">${t.a==='yes'?'SÍ':'NO'}</span>`;
+      tDiv.appendChild(ti);
+    });
+    w.appendChild(tDiv);
+  }
+
+  main.appendChild(w);
+  document.getElementById('btn-y').addEventListener('click',()=>answer('yes'));
+  document.getElementById('btn-n').addEventListener('click',()=>answer('no'));
+  document.getElementById('btn-s').addEventListener('click',skip);
+  main.scrollTop=0;
+}
+
+function showResult(){
+  const s=getSorted();const top=s[0];
+  const total=Object.values(scores).reduce((a,b)=>a+b,0);
+  const max=top.score||1;
+  const conf=total>0?Math.round((top.score/total)*100):0;
+  const gap=s[0].score-s[1].score;
+  document.getElementById('prog-fill').style.width='100%';
+  document.getElementById('prog-label').textContent='análisis completado';
+  document.getElementById('prog-conf').textContent=`confianza: ${conf}%`;
+  const main=document.getElementById('main');main.innerHTML='';
+  const w=document.createElement('div');w.className='result-wrap';
+  const nn=N[top.key];const r=REASONS[top.key];
+  w.innerHTML=`
+    <div class="result-hdr">// ANÁLISIS COMPLETADO · ${trail.length} preguntas · ventaja: +${gap} pts</div>
+    <div class="result-primary">
+      <div class="r-letter">${nn.l}</div>
+      <div class="r-alias">${nn.a}</div>
+      <div class="r-name">${nn.n}</div>
+      <div class="r-sep"></div>
+      <div class="r-why">${r.why}</div>
+      <div class="r-zafra">${r.zafra}</div>
+    </div>
+    <div class="all-scores"><div class="all-lbl">// distribución completa</div><div id="score-list"></div></div>
+    <button class="restart-btn" id="restart-btn">[ clasificar otra referente ]</button>`;
+  main.appendChild(w);
+  const sl=document.getElementById('score-list');
+  s.forEach(({key,score},i)=>{
+    const nn2=N[key];const p=Math.round((score/max)*100);
+    const row=document.createElement('div');row.className='score-row';
+    row.innerHTML=`<span class="score-letter">${nn2.l}</span><span class="score-alias">${nn2.a}</span><div class="score-bar-wrap"><div class="score-bar ${i===0?'top':''}" style="width:${p}%"></div></div><span class="score-val">${score}pts</span>`;
+    sl.appendChild(row);
+  });
+  document.getElementById('restart-btn').addEventListener('click',()=>{scores={};init();});
+  main.scrollTop=0;
+}
+
+init();
+</script>
+</body>
+</html>

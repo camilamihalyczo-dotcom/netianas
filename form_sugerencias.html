@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SUGERIR NETIANA</title>
+<!-- EmailJS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
+
+:root {
+  --black: #050505;
+  --green: #00ff41;
+  --gd: #00aa2a;
+  --gf: #001a00;
+  --mag: #ff00ff;
+  --magd: #880088;
+  --cyan: #00ffff;
+  --white: #e0ffe0;
+  --red: #ff3333;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  min-height: 100%;
+  background: var(--black);
+  color: var(--green);
+  font-family: 'Share Tech Mono', monospace;
+  cursor: crosshair;
+}
+
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px);
+  pointer-events: none;
+  z-index: 9000;
+}
+
+#scan {
+  position: fixed; left: 0; right: 0; height: 3px;
+  background: linear-gradient(transparent, rgba(0,255,65,0.08), transparent);
+  pointer-events: none; z-index: 8999;
+  animation: scanmove 7s linear infinite;
+}
+@keyframes scanmove { 0%{top:-2%} 100%{top:102%} }
+@keyframes blink    { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+@keyframes fadein   { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+@keyframes glitch {
+  0%,88%,100%{transform:translate(0);clip-path:none}
+  89%{transform:translate(-3px,1px);clip-path:inset(15% 0 60% 0)}
+  91%{transform:translate(3px,-1px);clip-path:inset(70% 0 5% 0)}
+}
+@keyframes pulse-border {
+  0%,100%{box-shadow: 0 0 0 0 rgba(0,255,65,0)} 
+  50%{box-shadow: 0 0 0 3px rgba(0,255,65,0.15)}
+}
+@keyframes success-in {
+  from{opacity:0;transform:scale(.97)}
+  to{opacity:1;transform:scale(1)}
+}
+
+/* ── LAYOUT ── */
+.page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: clamp(1.5rem, 5vw, 3rem) clamp(1rem, 4vw, 2rem);
+  animation: fadein .3s ease;
+}
+
+/* ── HEADER ── */
+.hd {
+  border-bottom: 1px solid var(--gd);
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+.hd-back {
+  font-size: clamp(.7rem, 1.8vw, .82rem);
+  color: var(--gd);
+  letter-spacing: .1em;
+  margin-bottom: .8rem;
+  display: flex; align-items: center; gap: .4rem;
+  cursor: pointer;
+  width: fit-content;
+  transition: color .1s;
+}
+.hd-back:hover { color: var(--green); }
+.hd-title {
+  font-family: 'VT323', monospace;
+  font-size: clamp(2rem, 6vw, 3rem);
+  color: var(--green);
+  text-shadow: 0 0 15px var(--green);
+  animation: glitch 10s infinite;
+  line-height: 1;
+  margin-bottom: .3rem;
+}
+.hd-title .mg { color: var(--mag); text-shadow: 0 0 12px var(--mag); }
+.hd-sub {
+  font-size: clamp(.75rem, 2vw, .88rem);
+  color: var(--gd);
+  letter-spacing: .1em;
+  line-height: 1.7;
+}
+
+/* ── FORM SECTIONS ── */
+.form-section {
+  margin-bottom: 1.8rem;
+  animation: fadein .3s ease both;
+}
+.section-label {
+  font-size: clamp(.7rem, 1.8vw, .82rem);
+  color: var(--magd);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  margin-bottom: .7rem;
+  display: flex; align-items: center; gap: .5rem;
+}
+.section-label::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: linear-gradient(to right, var(--gf), transparent);
+}
+.section-num {
+  font-family: 'VT323', monospace;
+  font-size: 1.2rem;
+  color: var(--magd);
+  min-width: 1.8rem;
+}
+.required-mark { color: var(--mag); margin-left: .2rem; }
+
+/* ── INPUTS ── */
+.field { margin-bottom: 1.1rem; }
+.field-label {
+  font-size: clamp(.72rem, 2vw, .85rem);
+  color: var(--green);
+  letter-spacing: .08em;
+  display: block;
+  margin-bottom: .4rem;
+}
+.field-hint {
+  font-size: clamp(.7rem, 1.8vw, .82rem);
+  color: var(--gd);
+  margin-bottom: .4rem;
+  line-height: 1.6;
+  display: block;
+}
+
+input[type="text"],
+input[type="email"],
+textarea {
+  width: 100%;
+  background: var(--gf);
+  border: 1px solid #003300;
+  border-bottom: 1px solid var(--gd);
+  color: var(--white);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(.8rem, 2.2vw, .95rem);
+  padding: .65rem .9rem;
+  outline: none;
+  transition: border-color .1s, box-shadow .1s;
+  letter-spacing: .04em;
+  resize: vertical;
+  caret-color: var(--green);
+}
+input[type="text"]:focus,
+input[type="email"]:focus,
+textarea:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 10px rgba(0,255,65,.08);
+  animation: pulse-border 2s infinite;
+}
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+textarea::placeholder {
+  color: #002800;
+}
+input.error, textarea.error {
+  border-color: var(--red);
+}
+
+/* char counter */
+.char-count {
+  font-size: clamp(.65rem, 1.6vw, .75rem);
+  color: #003300;
+  text-align: right;
+  margin-top: .3rem;
+  letter-spacing: .06em;
+  transition: color .2s;
+}
+.char-count.warn { color: var(--mag); }
+
+/* ── NETIANA SELECT ── */
+.netiana-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 5px;
+}
+.net-btn {
+  background: var(--black);
+  border: 1px solid #002200;
+  color: var(--gd);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(.72rem, 2vw, .85rem);
+  padding: .5rem .7rem;
+  cursor: pointer;
+  text-align: left;
+  display: flex; align-items: baseline; gap: .4rem;
+  transition: all .08s;
+  letter-spacing: .03em;
+}
+.net-btn:hover { background: var(--gf); border-color: var(--gd); color: var(--green); }
+.net-btn.selected {
+  background: #150015;
+  border-color: var(--mag);
+  color: var(--green);
+}
+.net-btn.selected .net-l { color: var(--mag); }
+.net-l {
+  font-family: 'VT323', monospace;
+  font-size: 1.1rem;
+  color: var(--magd);
+  min-width: 2rem;
+}
+
+/* ── TAGS GRID ── */
+.tags-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.tag-toggle {
+  background: none;
+  border: 1px solid #003300;
+  color: var(--gd);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(.72rem, 2vw, .82rem);
+  padding: 3px 10px;
+  cursor: pointer;
+  letter-spacing: .04em;
+  transition: all .1s;
+}
+.tag-toggle:hover { border-color: var(--cyan); color: var(--cyan); }
+.tag-toggle.on {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  background: rgba(0,255,255,.05);
+  box-shadow: 0 0 6px rgba(0,255,255,.15);
+}
+.tag-toggle.on::before { content: '✓ '; font-size: .6em; }
+
+/* tag category separator */
+.tag-group-lbl {
+  font-size: clamp(.65rem, 1.6vw, .75rem);
+  color: #002800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  width: 100%;
+  margin-top: .5rem;
+  margin-bottom: .1rem;
+}
+
+/* ── SUBMIT AREA ── */
+.submit-area {
+  border-top: 1px solid var(--gf);
+  padding-top: 1.2rem;
+  margin-top: .5rem;
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+}
+.submit-note {
+  font-size: clamp(.7rem, 1.8vw, .82rem);
+  color: #003300;
+  line-height: 1.6;
+  flex: 1;
+}
+.submit-btn {
+  background: none;
+  border: 1px solid var(--green);
+  color: var(--green);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(.8rem, 2.2vw, .95rem);
+  padding: .65rem 1.3rem;
+  cursor: pointer;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  transition: all .12s;
+  white-space: nowrap;
+}
+.submit-btn:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  box-shadow: 0 0 12px rgba(0,255,255,.15);
+}
+.submit-btn:disabled {
+  border-color: #002200;
+  color: #002800;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ── LOADING STATE ── */
+.loading-row {
+  display: flex; align-items: center; gap: .7rem;
+  font-size: clamp(.72rem, 2vw, .85rem); color: var(--gd);
+  margin-top: .5rem;
+  display: none;
+}
+.loading-row.on { display: flex; }
+.loading-dot {
+  width: 6px; height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: blink .8s step-end infinite;
+}
+.loading-dot:nth-child(2) { animation-delay: .2s; }
+.loading-dot:nth-child(3) { animation-delay: .4s; }
+
+/* ── ERROR MESSAGE ── */
+.error-msg {
+  font-size: clamp(.7rem, 1.8vw, .82rem);
+  color: var(--red);
+  margin-top: .3rem;
+  display: none;
+  letter-spacing: .05em;
+}
+.error-msg.on { display: block; }
+
+/* ── SUCCESS STATE ── */
+#success-panel {
+  display: none;
+  animation: success-in .3s ease;
+  border: 1px solid var(--green);
+  border-top: 3px solid var(--green);
+  background: var(--gf);
+  padding: 1.5rem;
+  text-align: center;
+}
+#success-panel.on { display: block; }
+.success-letter {
+  font-family: 'VT323', monospace;
+  font-size: 4rem;
+  color: var(--green);
+  text-shadow: 0 0 20px var(--green);
+  line-height: 1;
+  margin-bottom: .3rem;
+}
+.success-title {
+  font-family: 'VT323', monospace;
+  font-size: 1.8rem;
+  color: var(--cyan);
+  margin-bottom: .6rem;
+}
+.success-body {
+  font-size: clamp(.78rem, 2vw, .9rem);
+  color: var(--gd);
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
+.success-summary {
+  background: var(--black);
+  border: 1px solid #002200;
+  padding: .8rem;
+  font-size: clamp(.72rem, 2vw, .85rem);
+  color: var(--gd);
+  text-align: left;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
+.success-summary b { color: var(--green); }
+.success-btn {
+  background: none;
+  border: 1px solid var(--gd);
+  color: var(--gd);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(.75rem, 2vw, .85rem);
+  padding: .6rem 1.1rem;
+  cursor: pointer;
+  letter-spacing: .08em;
+  transition: all .1s;
+}
+.success-btn:hover { border-color: var(--green); color: var(--green); }
+</style>
+</head>
+<body>
+<div id="scan"></div>
+<div class="page" id="form-page">
+
+  <div class="hd">
+    <div class="hd-back" onclick="history.back()">← volver al rizoma</div>
+    <div class="hd-title">SUGERIR <span class="mg">NETIANA</span></div>
+    <div class="hd-sub">
+      ¿Encontraste una referente que encaja en el rizoma?<br>
+      Completá el formulario y la propuesta llega directamente a la investigación.
+    </div>
+  </div>
+
+  <form id="suggestion-form" novalidate>
+
+    <!-- 01 NOMBRE -->
+    <div class="form-section" style="animation-delay:.05s">
+      <div class="section-label">
+        <span class="section-num">01</span>
+        nombre de la referente
+        <span class="required-mark">*</span>
+      </div>
+      <div class="field">
+        <label class="field-label" for="f-name">Nombre completo o nombre artístico / colectivo / proyecto</label>
+        <input type="text" id="f-name" placeholder="ej: Cornelia Sollfrank" maxlength="120" autocomplete="off">
+        <div class="error-msg" id="err-name">// campo requerido</div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="f-link">Link de referencia <span style="color:var(--gd)">(opcional)</span></label>
+        <span class="field-hint">Sitio web, obra, artículo, red social — lo que mejor la represente</span>
+        <input type="text" id="f-link" placeholder="https://" maxlength="300" autocomplete="off">
+      </div>
+    </div>
+
+    <!-- 02 NETIANA -->
+    <div class="form-section" style="animation-delay:.1s">
+      <div class="section-label">
+        <span class="section-num">02</span>
+        ¿en qué netiana encaja?
+        <span class="required-mark">*</span>
+      </div>
+      <span class="field-hint" style="display:block;margin-bottom:.7rem;">Podés elegir más de una si aplica.</span>
+      <div class="netiana-grid" id="netiana-grid"></div>
+      <div class="error-msg" id="err-netiana">// seleccioná al menos una netiana</div>
+    </div>
+
+    <!-- 03 POR QUÉ -->
+    <div class="form-section" style="animation-delay:.15s">
+      <div class="section-label">
+        <span class="section-num">03</span>
+        ¿por qué encaja?
+        <span class="required-mark">*</span>
+      </div>
+      <div class="field">
+        <label class="field-label" for="f-why">Breve explicación — qué la conecta con la(s) netiana(s) elegida(s)</label>
+        <textarea id="f-why" rows="4" placeholder="ej: Su obra habita la red desde lo íntimo, construye presencia desde lo cotidiano..." maxlength="500"></textarea>
+        <div class="char-count" id="why-count">0 / 500</div>
+        <div class="error-msg" id="err-why">// campo requerido (mínimo 20 caracteres)</div>
+      </div>
+    </div>
+
+    <!-- 04 TAGS -->
+    <div class="form-section" style="animation-delay:.2s">
+      <div class="section-label">
+        <span class="section-num">04</span>
+        tags que corresponden
+        <span style="color:var(--gd);font-size:clamp(.68rem,1.8vw,.78rem);letter-spacing:.06em;text-transform:none;margin-left:.3rem">(opcional)</span>
+      </div>
+      <span class="field-hint" style="display:block;margin-bottom:.7rem;">
+        Seleccioná los que aplican a esta referente.
+        Si creés que falta un tag nuevo, lo podés agregar abajo.
+      </span>
+      <div class="tags-grid" id="tags-grid"></div>
+
+      <div class="field" style="margin-top:.9rem;">
+        <label class="field-label" for="f-newtag">Tags nuevos que sugerís <span style="color:var(--gd)">(opcional)</span></label>
+        <span class="field-hint">Separados por coma. Ej: net.art, performance, latinoamericana</span>
+        <input type="text" id="f-newtag" placeholder="tag1, tag2, tag3..." maxlength="200" autocomplete="off">
+      </div>
+    </div>
+
+    <!-- 05 CONTACTO -->
+    <div class="form-section" style="animation-delay:.25s">
+      <div class="section-label">
+        <span class="section-num">05</span>
+        tu contacto
+        <span style="color:var(--gd);font-size:clamp(.68rem,1.8vw,.78rem);letter-spacing:.06em;text-transform:none;margin-left:.3rem">(opcional)</span>
+      </div>
+      <div class="field">
+        <label class="field-label" for="f-email">Email o @ de red social</label>
+        <span class="field-hint">Solo si querés que te respondamos. No se publica ni comparte.</span>
+        <input type="text" id="f-email" placeholder="tu@mail.com o @usuario" maxlength="120" autocomplete="off">
+      </div>
+    </div>
+
+    <!-- SUBMIT -->
+    <div class="submit-area">
+      <div class="submit-note">
+        Los campos marcados con <span style="color:var(--mag)">*</span> son obligatorios.<br>
+        Las sugerencias son revisadas manualmente antes de incorporarse.
+      </div>
+      <button type="submit" class="submit-btn" id="submit-btn">
+        [ ENVIAR SUGERENCIA ]
+      </button>
+    </div>
+
+    <div class="loading-row" id="loading-row">
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+      <span>enviando al rizoma...</span>
+    </div>
+
+  </form>
+
+  <!-- SUCCESS -->
+  <div id="success-panel">
+    <div class="success-letter">✓</div>
+    <div class="success-title">SUGERENCIA ENVIADA</div>
+    <div class="success-body">
+      La propuesta llegó al rizoma.<br>
+      Será revisada e incorporada si encaja en la investigación.
+    </div>
+    <div class="success-summary" id="success-summary"></div>
+    <button class="success-btn" onclick="resetForm()">[ SUGERIR OTRA ]</button>
+  </div>
+
+</div>
+
+<script>
+const NETIANAS = [
+  {l:"(A)",a:"Artivista",   n:"Pertenecientes a Microsoft"},
+  {l:"(B)",a:"Buscadora",   n:"Latentes"},
+  {l:"(C)",a:"Cyborg",      n:"Inventadas"},
+  {l:"(D)",a:"Doméstica",   n:"Prosopon"},
+  {l:"(E)",a:"Esteganógrafa",n:"Cyborgs"},
+  {l:"(F)",a:"Flâneuse",    n:"«Fabulosas»"},
+  {l:"(G)",a:"Geek",        n:"Google"},
+  {l:"(H)",a:"Hacktivista", n:"Incluidas en esta clasificación"},
+  {l:"(I)",a:"Invisible",   n:"Chateadoras compulsivas"},
+  {l:"(J)",a:"Jinetera",    n:"Incontables"},
+  {l:"(K)",a:"Karaokista",  n:"Descritas en Times New Roman"},
+  {l:"(L)",a:"Lurker",      n:"Etcétera"},
+  {l:"(M)",a:"Multitud",    n:"Que entran en Silicon Valley"},
+  {l:"(N)",a:"Nómade",      n:"Que viven lo que una mosca"},
+];
+
+const TAG_GROUPS = [
+  { label:"// geografía",
+    tags:["latinoamericana","europea","anglosajona","asiática","africana"] },
+  { label:"// tipo",
+    tags:["colectivo","artista","escritora","investigadora","profesora","creadora/comunicadora de contenido"] },
+  { label:"// formato / práctica",
+    tags:["net.art","video","performance","manifiesto"] },
+  { label:"// vínculo con la obra",
+    tags:["citada por Zafra","ref. vista en clase","ref. sugerida"] },
+  { label:"// conceptual",
+    tags:["poder corporativo","esteganografía","limen","patriarcado digital","software libre",
+          "vigilancia","biopolítica","Haraway","cuerpo-máquina","cyborg","frontera","algoritmo",
+          "dato","academia","legitimidad","pantalla","jardín secreto","virtualidad","cuerpo",
+          "Kristeva","Butler","performatividad","cuerpo-texto","ficción","desidentificación",
+          "máscara","avatar","representación","teatralidad digital","posthumano","queer","exceso",
+          "no-normativo","metaficción","ironía","autoconciencia","multiplicidad","identidad online",
+          "presencia","tiempo","rizoma","líneas de fuga","Deleuze","incontabilidad","devenir",
+          "tipografía","formato","archivo","apertura","indeterminación","etcétera","meritocracia",
+          "devenir-animal","efímero","identidad"] },
+];
+
+// ── BUILD NETIANA GRID ──
+const netGrid = document.getElementById('netiana-grid');
+const selectedNets = new Set();
+NETIANAS.forEach((n, i) => {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'net-btn';
+  btn.innerHTML = `<span class="net-l">${n.l}</span>${n.a}`;
+  btn.title = n.n;
+  btn.addEventListener('click', () => {
+    if (selectedNets.has(i)) { selectedNets.delete(i); btn.classList.remove('selected'); }
+    else                     { selectedNets.add(i);    btn.classList.add('selected'); }
+    document.getElementById('err-netiana').classList.remove('on');
+  });
+  netGrid.appendChild(btn);
+});
+
+// ── BUILD TAGS GRID ──
+const tagsGrid = document.getElementById('tags-grid');
+const selectedTags = new Set();
+TAG_GROUPS.forEach(group => {
+  const lbl = document.createElement('div');
+  lbl.className = 'tag-group-lbl';
+  lbl.textContent = group.label;
+  tagsGrid.appendChild(lbl);
+
+  group.tags.forEach(tag => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'tag-toggle';
+    btn.textContent = tag;
+    btn.addEventListener('click', () => {
+      if (selectedTags.has(tag)) { selectedTags.delete(tag); btn.classList.remove('on'); }
+      else                       { selectedTags.add(tag);    btn.classList.add('on'); }
+    });
+    tagsGrid.appendChild(btn);
+  });
+});
+
+// ── CHAR COUNTER ──
+const whyArea   = document.getElementById('f-why');
+const whyCount  = document.getElementById('why-count');
+whyArea.addEventListener('input', () => {
+  const l = whyArea.value.length;
+  whyCount.textContent = `${l} / 500`;
+  whyCount.classList.toggle('warn', l > 450);
+});
+
+// ── VALIDATION ──
+function validate() {
+  let ok = true;
+  const name = document.getElementById('f-name').value.trim();
+  const why  = document.getElementById('f-why').value.trim();
+
+  if (!name) {
+    document.getElementById('f-name').classList.add('error');
+    document.getElementById('err-name').classList.add('on');
+    ok = false;
+  } else {
+    document.getElementById('f-name').classList.remove('error');
+    document.getElementById('err-name').classList.remove('on');
+  }
+
+  if (selectedNets.size === 0) {
+    document.getElementById('err-netiana').classList.add('on');
+    ok = false;
+  } else {
+    document.getElementById('err-netiana').classList.remove('on');
+  }
+
+  if (why.length < 20) {
+    document.getElementById('f-why').classList.add('error');
+    document.getElementById('err-why').classList.add('on');
+    ok = false;
+  } else {
+    document.getElementById('f-why').classList.remove('error');
+    document.getElementById('err-why').classList.remove('on');
+  }
+
+  return ok;
+}
+
+// ── FORM SUBMIT con EmailJS ──
+document.getElementById('suggestion-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  if (!validate()) return;
+
+  const btn     = document.getElementById('submit-btn');
+  const loading = document.getElementById('loading-row');
+  btn.disabled  = true;
+  loading.classList.add('on');
+
+  const nets    = [...selectedNets].map(i => `${NETIANAS[i].l} ${NETIANAS[i].a}`).join(', ');
+  const tags    = [...selectedTags].join(', ');
+  const newTags = document.getElementById('f-newtag').value.trim();
+
+  const payload = {
+    nombre:     document.getElementById('f-name').value.trim(),
+    link:       document.getElementById('f-link').value.trim() || '—',
+    netianas:   nets,
+    por_que:    document.getElementById('f-why').value.trim(),
+    tags:       tags || '—',
+    tags_nuevos: newTags || '—',
+    contacto:   document.getElementById('f-email').value.trim() || '—',
+    fecha:      new Date().toLocaleString('es-AR'),
+  };
+
+  try {
+    // EmailJS — reemplazá los tres valores con los de tu cuenta
+    const SERVICE_ID  = 'TU_SERVICE_ID';   // ej: 'service_abc123'
+    const TEMPLATE_ID = 'TU_TEMPLATE_ID';  // ej: 'template_xyz789'
+    const PUBLIC_KEY  = 'TU_PUBLIC_KEY';   // ej: 'user_AbCdEfGh'
+
+    await emailjs.send(SERVICE_ID, TEMPLATE_ID, payload, PUBLIC_KEY);
+
+    loading.classList.remove('on');
+    showSuccess(payload);
+  } catch (err) {
+    loading.classList.remove('on');
+    btn.disabled = false;
+    // mostrar error inline
+    const errDiv = document.createElement('div');
+    errDiv.style.cssText = 'font-size:.78rem;color:#ff3333;margin-top:.5rem;letter-spacing:.05em;';
+    errDiv.textContent = `// error al enviar: ${err?.text || 'verificá tu conexión e intentá de nuevo'}`;
+    document.querySelector('.submit-area').appendChild(errDiv);
+    setTimeout(() => errDiv.remove(), 5000);
+  }
+});
+
+function showSuccess(payload) {
+  document.getElementById('suggestion-form').style.display = 'none';
+  const summary = document.getElementById('success-summary');
+  summary.innerHTML = `
+    <b>referente:</b> ${payload.nombre}<br>
+    ${payload.link !== '—' ? `<b>link:</b> ${payload.link}<br>` : ''}
+    <b>netiana(s):</b> ${payload.netianas}<br>
+    <b>por qué:</b> ${payload.por_que}<br>
+    ${payload.tags !== '—' ? `<b>tags:</b> ${payload.tags}<br>` : ''}
+    ${payload.tags_nuevos !== '—' ? `<b>tags nuevos:</b> ${payload.tags_nuevos}<br>` : ''}
+    ${payload.contacto !== '—' ? `<b>contacto:</b> ${payload.contacto}` : ''}`;
+  document.getElementById('success-panel').classList.add('on');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function resetForm() {
+  document.getElementById('suggestion-form').reset();
+  document.getElementById('suggestion-form').style.display = '';
+  document.getElementById('success-panel').classList.remove('on');
+  selectedNets.clear();
+  selectedTags.clear();
+  document.querySelectorAll('.net-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('.tag-toggle').forEach(b => b.classList.remove('on'));
+  whyCount.textContent = '0 / 500';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>

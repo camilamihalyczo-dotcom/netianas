@@ -899,6 +899,19 @@ body::after {
 .mob-tr-title { font-family: 'VT323', monospace; font-size: clamp(1.3rem, 5vw, 1.8rem); color: var(--cyan); }
 .mob-tr-sub { font-size: clamp(0.58rem, 2vw, 0.7rem); color: #005555; }
 
+/* suggest link */
+.suggest-link {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: inherit;
+  color: var(--gd);
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  transition: color 0.1s;
+  flex-shrink: 0;
+}
+.suggest-link:hover { color: var(--green); }
+
 /* responsive */
 @media (min-width: 641px) { #mob { display: none !important; } }
 @media (max-width: 640px) {
@@ -924,7 +937,8 @@ body::after {
     <div class="home-title">N(H)ACER <span class="mag">MUJER</span><br>EN INTERNET</div>
     <div class="home-meta">
       OBRA NET.ART · <span>REMEDIOS ZAFRA</span> · ANTITAXONOMÍA RIZOMÁTICA ·
-      NAVEGAR ES DEVENIR · <span>14 MESETAS</span> · NINGÚN CENTRO
+      NAVEGAR ES DEVENIR · <span>14 MESETAS</span> · NINGÚN CENTRO ·
+      <a href="form_sugerencias.html" class="suggest-link">[ SUGERIR NETIANA ]</a>
     </div>
   </div>
   <div class="home-bar">
@@ -950,8 +964,9 @@ body::after {
     <div class="sb-foot">ZAFRA (2005) · todos los recorridos son válidos</div>
   </div>
   <div class="ct">
-    <div class="ct-head" id="bc">
-      <span>NETIANAS.NET</span> / seleccionar nodo
+    <div class="ct-head" id="bc" style="display:flex;justify-content:space-between;align-items:center;">
+      <span id="bc-path"><span>NETIANAS.NET</span> / seleccionar nodo</span>
+      <a href="form_sugerencias.html" class="suggest-link">[ SUGERIR NETIANA ]</a>
     </div>
     <div class="ct-body" id="ct-body">
       <div class="empty">
@@ -968,8 +983,13 @@ body::after {
 <!-- ═══ MOBILE ═══ -->
 <div class="view" id="mob">
   <div class="mob-head" onclick="mobGoHome()" title="Volver al inicio">
-    <div class="mob-t">N(H)ACER MUJER <span style="color:var(--mag)">EN INTERNET</span></div>
-    <div class="mob-s">↑ inicio · 14 mesetas · rizoma · Remedios Zafra 2005</div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+      <div>
+        <div class="mob-t">N(H)ACER MUJER <span style="color:var(--mag)">EN INTERNET</span></div>
+        <div class="mob-s">↑ inicio · 14 mesetas · rizoma · Remedios Zafra 2005</div>
+      </div>
+      <a href="form_sugerencias.html" class="suggest-link" onclick="event.stopPropagation()" style="margin-top:2px;">[ SUGERIR ]</a>
+    </div>
   </div>
 
   <!-- grid home mobile -->
@@ -1202,7 +1222,7 @@ function showNode(idx) {
   if (nbEl) nbEl.classList.add('on');
 
   const n = DATA[idx];
-  document.getElementById('bc').innerHTML =
+  document.getElementById('bc-path').innerHTML =
     `<span>NETIANAS.NET</span> / ${n.l} ${n.a} · ${n.n}`;
 
   const seen = {};
@@ -1276,7 +1296,7 @@ function showTag(tag) {
   document.querySelectorAll('.nb').forEach(b => b.classList.remove('on'));
 
   const hits = RZ[tag] || [];
-  document.getElementById('bc').innerHTML =
+  document.getElementById('bc-path').innerHTML =
     `<span>NETIANAS.NET</span> / tag: <span style="color:var(--cyan)">${tag}</span>`;
 
   const body = document.getElementById('ct-body');
@@ -1467,15 +1487,15 @@ const REFS = {
     null, null
   ],
   2: [ // C · Cyborg
-    { img:"c-1-cheang.png",   title:"Shu Lea Cheang",
+    { img:"c-1-cheang.jpg",   title:"Shu Lea Cheang",
       sub:["Taiwan/USA","(anglosajona)","(asiática)","(citada por Zafra)","(net.art)"],
-      body:"Mencionada por Zafra en \"Habitares reversibles\". Brandon (1998): cuerpo trans, código, identidad desdoblada en red." },
+      body:`Mencionada por Zafra en 'Habitares reversibles'. Brandon (1998): cuerpo trans, código, identidad desdoblada en red.` },
     { img:"c-2-vesna.jpg",    title:"Victoria Vesna",
       sub:["USA","(anglosajona)","(citada por Zafra)","(net.art)"],
       body:"Bodies Incorporated: construir un cuerpo virtual eligiendo partes, materiales, sexo, sexualidad. Tres ambientes: LIMBO, NECROPOLIS, SHOWPLACE." },
     { img:"c-3-moon.gif",     title:"Moon Ribas",
       sub:[],
-      body:"\"La libertad de ser cyborgs\": La posibilidad de convertirse así misma en una mujer cibernética que construye sus piezas dancísticas y su identidad a partir de un acercamiento profundo a la naturaleza." },
+      body:`'La libertad de ser cyborgs': La posibilidad de convertirse así misma en una mujer cibernética que construye sus piezas dancísticas y su identidad a partir de un acercamiento profundo a la naturaleza.` },
     { img:"c-4-hershman.jpg", title:"Lynn Hershman",
       sub:["1995–1998"],
       body:"The Dollie Clone Series." }
@@ -1483,7 +1503,7 @@ const REFS = {
   3: [ // D · Doméstica
     { img:"d-1-mouchette.jpg", title:"Mouchette",
       sub:["Anónimo","1996–","(citada por Zafra)","(net.art)"],
-      body:"mouchette.org — ficción de una niña suicida de 13 años, donde artista y obra se fusionan. \"En la red no hay diferencia entre ser un artista o una obra de arte.\"" },
+      body:"mouchette.org — ficción de una niña suicida de 13 años, donde artista y obra se fusionan. 'En la red no hay diferencia entre ser un artista o una obra de arte.'" },
     { img:"d-2-laguna.jpg",    title:"Fernanda Laguna",
       sub:["Argentina","(latinoamericana)"],
       body:"Trabajo sobre feminidad, domesticidad e identidad desde la práctica artística DIY y amateur." },
@@ -1578,6 +1598,36 @@ const REFS = {
   ],
 };
 
+// ── CARGAR SUGERENCIAS APROBADAS DESDE JSON ──
+// Cuando quieras publicar nuevas sugerencias:
+// 1. Editá refs_sugeridas.json (mismo formato que REFS arriba)
+// 2. Guardá — la página las carga automáticamente al iniciar
+async function cargarSugeridas() {
+  try {
+    const res = await fetch('refs_sugeridas.json?v=' + Date.now());
+    if (!res.ok) return; // archivo no existe todavía — ok, no pasa nada
+    const sugeridas = await res.json();
+
+    // fusionar con REFS: agregar al final de cada netiana, antes de los nulls
+    Object.entries(sugeridas).forEach(([netIdx, nuevas]) => {
+      const idx = parseInt(netIdx);
+      if (!REFS[idx]) return;
+      nuevas.forEach(ref => {
+        if (!ref) return;
+        // agregar tag (ref. sugerida) automáticamente si no está
+        if (!ref.sub) ref.sub = [];
+        if (!ref.sub.includes('(ref. sugerida)')) ref.sub.push('(ref. sugerida)');
+        // buscar primer slot null y reemplazar, o pushear
+        const nullIdx = REFS[idx].indexOf(null);
+        if (nullIdx !== -1) REFS[idx][nullIdx] = ref;
+        else REFS[idx].push(ref);
+      });
+    });
+  } catch {
+    // JSON no encontrado o error de red — no hace nada, la página funciona igual
+  }
+}
+
 // ── REF TAG MAP: tag → [ {netIdx, refIdx} ] ──
 const REF_TAG_MAP = {};
 function buildRefTagMap() {
@@ -1595,7 +1645,11 @@ function buildRefTagMap() {
     });
   });
 }
-buildRefTagMap();
+
+// Iniciar: primero cargar sugeridas, luego construir el mapa y la UI
+cargarSugeridas().then(() => {
+  buildRefTagMap();
+});
 
 // ── RENDER SUBTITLE with clickable tags ──
 function renderSub(subArr) {
@@ -1613,7 +1667,7 @@ function showRefTag(tag) {
   const hits = REF_TAG_MAP[tag] || [];
   navHistory.push({ type: 'refTag', tag });
   document.querySelectorAll('.nb').forEach(b => b.classList.remove('on'));
-  document.getElementById('bc').innerHTML =
+  document.getElementById('bc-path').innerHTML =
     `<span>NETIANAS.NET</span> / referentes / <span style="color:var(--cyan)">(${tag})</span>`;
 
   const body = document.getElementById('ct-body');
