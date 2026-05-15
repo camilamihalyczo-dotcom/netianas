@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>N(H)ACER MUJER EN INTERNET</title>
+<link rel="canonical" href="https://netianas.vercel.app">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
 
@@ -452,13 +453,53 @@ body::after {
 .ref-card {
   border: 1px solid #002800;
   cursor: pointer;
-  transition: border-color 0.1s;
+  transition: border-color 0.1s, box-shadow 0.1s;
   position: relative;
   overflow: hidden;
   background: #020902;
 }
-.ref-card:hover { border-color: var(--mag); }
-.ref-card.open { border-color: var(--mag); }
+
+/* glitch scan line on hover */
+.ref-card::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; height: 2px;
+  background: rgba(0,255,65,0.5);
+  top: -10%; opacity: 0;
+  z-index: 5; pointer-events: none;
+}
+/* CLICK label on hover */
+.ref-card::before {
+  content: '[ CLICK ]';
+  position: absolute;
+  bottom: 28px; left: 0; right: 0;
+  text-align: center;
+  font-family: 'VT323', monospace;
+  font-size: clamp(0.85rem, 1.8vw, 1rem);
+  color: var(--green);
+  letter-spacing: 0.14em;
+  opacity: 0; z-index: 4;
+  text-shadow: 0 0 8px var(--green);
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+.ref-card:hover {
+  border-color: var(--green);
+  box-shadow: 0 0 10px rgba(0,255,65,0.12);
+}
+.ref-card:hover::before { opacity: 1; }
+.ref-card:hover::after  {
+  opacity: 1;
+  animation: ref-scan 0.9s linear infinite;
+}
+.ref-card:hover .ref-img img {
+  filter: grayscale(0%) contrast(1.3) brightness(0.8);
+  animation: ref-glitch 2.5s steps(1) infinite;
+}
+.ref-card:hover .ref-card-label { color: var(--green); }
+.ref-card.open { border-color: var(--mag); box-shadow: 0 0 12px rgba(255,0,255,0.15); }
+.ref-card.open::before { opacity: 0; }
+.ref-card.open::after  { opacity: 0; animation: none; }
 
 .ref-img {
   width: 100%;
@@ -472,10 +513,21 @@ body::after {
   width: 100%; height: 100%;
   object-fit: cover;
   display: block;
-  filter: grayscale(40%) contrast(1.1);
+  filter: grayscale(60%) contrast(1.1);
   transition: filter 0.2s;
 }
-.ref-card:hover .ref-img img { filter: grayscale(0%) contrast(1.2); }
+
+@keyframes ref-glitch {
+  0%,89%,100% { clip-path: none; transform: translate(0); }
+  90% { clip-path: inset(15% 0 60% 0); transform: translate(-3px, 1px); }
+  92% { clip-path: inset(65% 0 8% 0);  transform: translate(3px,-1px); }
+  94% { clip-path: inset(40% 0 35% 0); transform: translate(-1px, 2px); }
+  96% { clip-path: none; transform: translate(1px, 0); }
+}
+@keyframes ref-scan {
+  0%   { top: -5%; opacity: 0.8; }
+  100% { top: 105%; opacity: 0; }
+}
 .ref-img-placeholder {
   width: 100%; height: 100%;
   display: flex; align-items: center; justify-content: center;
@@ -562,12 +614,33 @@ body::after {
   margin-bottom: 1rem;
 }
 .mob-ref-card {
-  border: 1px solid #002800;
+  border: 1px solid #001800;
   cursor: pointer;
   background: #020902;
   transition: border-color 0.1s;
+  position: relative;
+  overflow: hidden;
 }
-.mob-ref-card:hover, .mob-ref-card.open { border-color: var(--mag); }
+.mob-ref-card::before {
+  content: '[ CLICK ]';
+  position: absolute;
+  bottom: 22px; left: 0; right: 0;
+  text-align: center;
+  font-family: 'VT323', monospace;
+  font-size: 0.9rem;
+  color: var(--green);
+  letter-spacing: 0.12em;
+  opacity: 0; z-index: 4;
+  text-shadow: 0 0 8px var(--green);
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+.mob-ref-card:hover::before,
+.mob-ref-card:active::before { opacity: 1; }
+.mob-ref-card:hover,
+.mob-ref-card:active { border-color: var(--green); }
+.mob-ref-card.open { border-color: var(--mag); }
+.mob-ref-card.open::before { opacity: 0; }
 .mob-ref-img {
   width: 100%; aspect-ratio: 1/1;
   background: #010801;
@@ -634,8 +707,17 @@ body::after {
   letter-spacing: 0.03em;
   transition: color 0.1s;
   font-family: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(0,255,255,0.35);
+  text-decoration-style: dotted;
 }
-.ref-tag-link:hover { color: var(--mag); text-shadow: 0 0 6px var(--mag); }
+.ref-tag-link:hover {
+  color: var(--mag);
+  text-shadow: 0 0 6px var(--mag);
+  text-decoration-color: var(--mag);
+  text-decoration-style: solid;
+}
 .ref-sub-plain { color: var(--gd); font-size: inherit; }
 
 .ref-exp-sub {
@@ -902,15 +984,17 @@ body::after {
 /* suggest link */
 .suggest-link {
   font-family: 'Share Tech Mono', monospace;
-  font-size: inherit;
-  color: var(--gd);
+  font-size: clamp(0.6rem, 1.3vw, 0.75rem);
+  color: var(--green);
   text-decoration: none;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   white-space: nowrap;
   transition: color 0.1s;
   flex-shrink: 0;
+  font-weight: bold;
 }
-.suggest-link:hover { color: var(--green); }
+.suggest-link b { color: var(--green); }
+.suggest-link:hover { color: var(--cyan); }
 
 /* responsive */
 @media (min-width: 641px) { #mob { display: none !important; } }
@@ -938,7 +1022,7 @@ body::after {
     <div class="home-meta">
       OBRA NET.ART · <span>REMEDIOS ZAFRA</span> · ANTITAXONOMÍA RIZOMÁTICA ·
       NAVEGAR ES DEVENIR · <span>14 MESETAS</span> · NINGÚN CENTRO ·
-      <a href="form_sugerencias.html" class="suggest-link">[ SUGERIR NETIANA ]</a>
+      <a href="form_sugerencias.html" class="suggest-link"><b>[ SUGERIR NETIANA ]</b></a>
     </div>
   </div>
   <div class="home-bar">
@@ -966,7 +1050,7 @@ body::after {
   <div class="ct">
     <div class="ct-head" id="bc" style="display:flex;justify-content:space-between;align-items:center;">
       <span id="bc-path"><span>NETIANAS.NET</span> / seleccionar nodo</span>
-      <a href="form_sugerencias.html" class="suggest-link">[ SUGERIR NETIANA ]</a>
+      <a href="form_sugerencias.html" class="suggest-link"><b>[ SUGERIR NETIANA ]</b></a>
     </div>
     <div class="ct-body" id="ct-body">
       <div class="empty">
@@ -983,13 +1067,8 @@ body::after {
 <!-- ═══ MOBILE ═══ -->
 <div class="view" id="mob">
   <div class="mob-head" onclick="mobGoHome()" title="Volver al inicio">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-      <div>
-        <div class="mob-t">N(H)ACER MUJER <span style="color:var(--mag)">EN INTERNET</span></div>
-        <div class="mob-s">↑ inicio · 14 mesetas · rizoma · Remedios Zafra 2005</div>
-      </div>
-      <a href="form_sugerencias.html" class="suggest-link" onclick="event.stopPropagation()" style="margin-top:2px;">[ SUGERIR ]</a>
-    </div>
+    <div class="mob-t">N(H)ACER MUJER <span style="color:var(--mag)">EN INTERNET</span></div>
+    <div class="mob-s">↑ inicio · 14 mesetas · rizoma · Remedios Zafra 2005 · <a href="form_sugerencias.html" class="mob-suggest-link" onclick="event.stopPropagation()">[ SUGERIR NETIANA ]</a></div>
   </div>
 
   <!-- grid home mobile -->
@@ -1128,7 +1207,12 @@ const BOOT = [
   { s:"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", c:"" },
 ];
 
-(function runBoot() {
+// ── BOOT: skip to home if coming from form ──
+if (new URLSearchParams(window.location.search).get('skip') === '1') {
+  document.getElementById('boot').style.display = 'none';
+  goHome();
+} else {
+  (function runBoot() {
   const log = document.getElementById('boot-log');
   let i = 0;
   function next() {
@@ -1148,6 +1232,7 @@ const BOOT = [
   }
   next();
 })();
+} // end skip else
 
 /* ══════════════════════════════════════
    VIEW MANAGEMENT
@@ -1470,7 +1555,7 @@ function renderMobDetail(idx, prevIdx) {
 const REFS = {
   0: [ // A · Artivista
     { img:"a-1-mujeres.jpg",  title:"Mujeres Públicas",
-      sub:["Argentina","(colectivo)","(latinoamericana)","2003–"],
+      sub:["Argentina","(colectivo)","(latinoamericana)","(artista)","(performance)","2003–"],
       body:"Intervenciones visuales feministas en espacio público y digital, apropiación del lenguaje publicitario y propagandístico." },
     { img:"a-2-niunamenos.jpg", title:"#NiUnaMenos",
       sub:["Argentina","(colectivo)","(latinoamericana)","2015–"],
@@ -1479,81 +1564,81 @@ const REFS = {
   ],
   1: [ // B · Buscadora
     { img:"b-1-golder.jpg",   title:"Gabriela Golder",
-      sub:["Argentina","(latinoamericana)","(net.art)"],
+      sub:["Argentina","(latinoamericana)","(artista)","(investigadora)","(profesora)","(net.art)","(video)"],
       body:"Net.art y videoarte, Postales — fragmentos íntimos dispersos en la red, búsqueda de presencia a través del archivo doméstico." },
     { img:"b-2-yeregui.jpg",  title:"Mariela Yeregui",
-      sub:["Argentina","(latinoamericana)","(net.art)"],
+      sub:["Argentina","(latinoamericana)","(artista)","(investigadora)","(profesora)","(net.art)"],
       body:"Arte interactivo y robótico, trabaja la pantalla como umbral entre presencia y ausencia." },
     null, null
   ],
   2: [ // C · Cyborg
-    { img:"c-1-cheang.jpg",   title:"Shu Lea Cheang",
-      sub:["Taiwan/USA","(anglosajona)","(asiática)","(citada por Zafra)","(net.art)"],
-      body:`Mencionada por Zafra en 'Habitares reversibles'. Brandon (1998): cuerpo trans, código, identidad desdoblada en red.` },
+    { img:"c-1-cheang.png",   title:"Shu Lea Cheang",
+      sub:["Taiwan/USA","(anglosajona)","(asiática)","(artista)","(citada por Zafra)","(net.art)","(video)"],
+      body:"Mencionada por Zafra en \'Habitares reversibles\'. Brandon (1998): cuerpo trans, código, identidad desdoblada en red." },
     { img:"c-2-vesna.jpg",    title:"Victoria Vesna",
-      sub:["USA","(anglosajona)","(citada por Zafra)","(net.art)"],
+      sub:["USA","(anglosajona)","(artista)","(investigadora)","(profesora)","(citada por Zafra)","(net.art)"],
       body:"Bodies Incorporated: construir un cuerpo virtual eligiendo partes, materiales, sexo, sexualidad. Tres ambientes: LIMBO, NECROPOLIS, SHOWPLACE." },
     { img:"c-3-moon.gif",     title:"Moon Ribas",
-      sub:[],
-      body:`'La libertad de ser cyborgs': La posibilidad de convertirse así misma en una mujer cibernética que construye sus piezas dancísticas y su identidad a partir de un acercamiento profundo a la naturaleza.` },
+      sub:["España","(europea)","(artista)","(performance)"],
+      body:"\'La libertad de ser cyborgs\': La posibilidad de convertirse así misma en una mujer cibernética que construye sus piezas dancísticas y su identidad a partir de un acercamiento profundo a la naturaleza." },
     { img:"c-4-hershman.jpg", title:"Lynn Hershman",
-      sub:["1995–1998"],
+      sub:["USA","(anglosajona)","(artista)","(net.art)","(video)","1995–1998"],
       body:"The Dollie Clone Series." }
   ],
   3: [ // D · Doméstica
     { img:"d-1-mouchette.jpg", title:"Mouchette",
-      sub:["Anónimo","1996–","(citada por Zafra)","(net.art)"],
-      body:"mouchette.org — ficción de una niña suicida de 13 años, donde artista y obra se fusionan. 'En la red no hay diferencia entre ser un artista o una obra de arte.'" },
+      sub:["Anónimo","1996–","(artista)","(citada por Zafra)","(net.art)"],
+      body:"mouchette.org — ficción de una niña suicida de 13 años, donde artista y obra se fusionan. \'En la red no hay diferencia entre ser un artista o una obra de arte.\'" },
     { img:"d-2-laguna.jpg",    title:"Fernanda Laguna",
-      sub:["Argentina","(latinoamericana)"],
+      sub:["Argentina","(latinoamericana)","(artista)","(escritora)"],
       body:"Trabajo sobre feminidad, domesticidad e identidad desde la práctica artística DIY y amateur." },
     null, null
   ],
   4: [ // E · Esteganógrafa
     { img:"e-1-olia.jpg",  title:"Olia Lialina",
-      sub:["Rusia","(asiática)","(citada por Zafra)","(ref. vista en clase)","(net.art)"],
+      sub:["Rusia","(europea)","(artista)","(investigadora)","(citada por Zafra)","(ref. vista en clase)","(net.art)"],
       body:"My Boyfriend Came Back from the War (1996): narrativa oculta en la estructura del HTML, lo que no se dice visible en el código." },
     { img:"e-2-eva.jpg",   title:"0100101110101101.ORG",
-      sub:["Eva y Franco Mattes, Italia","(europea)","(ref. vista en clase)","(net.art)"],
+      sub:["Eva y Franco Mattes, Italia","(europea)","(artista)","(colectivo)","(ref. vista en clase)","(net.art)"],
       body:"Hackeo de identidades corporativas, arte que se esconde dentro del sistema." },
     null, null
   ],
   5: [ // F · Flâneuse
     { img:"f-1-dzodan.jpg", title:"Flavia Dzodan",
-      sub:["Argentina","(latinoamericana)"],
+      sub:["Argentina","(latinoamericana)","(escritora)","(investigadora)"],
       body:"Escritura política y errante en la web, figura del sujeto que deambula los espacios digitales sin pertenecer a ninguno." },
     null, null, null
   ],
   6: [ // G · Geek
     { img:"g-1-sollfrank.jpg", title:"Cornelia Sollfrank",
-      sub:["Alemania","(europea)","(citada por Zafra)"],
+      sub:["Alemania","(europea)","(artista)","(investigadora)","(profesora)","(citada por Zafra)","(net.art)"],
       body:"Female Extension (1997): hackeó un concurso de net.art generando 289 participantes femeninas falsas con software propio. Subversión del algoritmo desde adentro." },
     { img:"g-2-moll.jpg",      title:"Joana Moll",
-      sub:["España","(europea)"],
+      sub:["España","(europea)","(artista)","(investigadora)","(net.art)"],
       body:"Artista de datos: visualiza el peso físico de internet, los cables, el consumo energético. La geek que lee las vísceras de la red." },
     null, null
   ],
   7: [ // H · Hacktivista
     { img:"h-1-meyers.jpg",    title:"Raquel Meyers",
-      sub:["España/Suecia","(europea)"],
+      sub:["España/Suecia","(europea)","(artista)","(net.art)"],
       body:"Arte en texto y caracteres ASCII, hackeo de las interfaces más básicas." },
     { img:"h-2-donestech.jpg", title:"Donestech",
-      sub:["(colectivo)","(europea)"],
+      sub:["España","(europea)","(colectivo)","(investigadora)"],
       body:"Investigación y acción sobre mujeres, género y tecnologías libres. Hacktivismo feminista." },
     null, null
   ],
   8: [ // I · Invisible
     { img:"i-1-yofermina.jpg",  title:"Yofermina",
-      sub:["Argentina","(latinoamericana)","(creadora/comunicadora de contenido)"],
+      sub:["Argentina","(latinoamericana)","(creadora/comunicadora de contenido)","(video)"],
       body:"Presencia online construida fragmento a fragmento, identidad que existe en la acumulación de lo menor." },
     { img:"i-2-doragarcia.jpg", title:"Dora García",
-      sub:["España","(europea)","(citada por Zafra)"],
+      sub:["España","(europea)","(artista)","(investigadora)","(citada por Zafra)","(net.art)"],
       body:"Todas las historias (2001): aforismos distribuidos sin orden, presencia hecha de ausencias y silencios." },
     null, null
   ],
   9: [ // J · Jinetera
     { img:"j-1-bruguera.jpg", title:"Tania Bruguera",
-      sub:["Cuba","(latinoamericana)","(artista)","(performance)"],
+      sub:["Cuba","(latinoamericana)","(artista)","(profesora)","(performance)"],
       body:"Arte político y performático que negocia constantemente los límites entre lo permitido y lo prohibido, cuerpo como moneda de cambio en el espacio público." },
     { img:"j-2-galindo.jpg",  title:"Regina José Galindo",
       sub:["Guatemala","(latinoamericana)","(artista)","(performance)"],
@@ -1562,19 +1647,19 @@ const REFS = {
   ],
   10: [ // K · Karaokista
     { img:"k-1-tomic.jpg",  title:"Milica Tomić",
-      sub:["Serbia/Yugoslavia","(europea)","(citada por Zafra)"],
+      sub:["Serbia/Yugoslavia","(europea)","(artista)","(video)","(performance)","(citada por Zafra)"],
       body:"I am Milica Tomić: video donde se presenta con afirmaciones contradictorias de identidad que le provocan heridas físicas en el rostro. La identidad como contradicción performativa." },
     { img:"k-2-ahmed.jpg",  title:"Sara Ahmed",
-      sub:["Australia/UK","(anglosajona)","(escritora)","(profesora)"],
+      sub:["Australia/UK","(anglosajona)","(escritora)","(investigadora)","(profesora)"],
       body:"Figura de killjoy feminista, la que interrumpe el discurso institucional desde adentro del mismo lenguaje." },
     null, null
   ],
   11: [ // L · Lurker
     { img:"l-1-gache.jpg", title:"Belén Gache",
-      sub:["Argentina","(latinoamericana)","(escritora)"],
+      sub:["Argentina","(latinoamericana)","(escritora)","(investigadora)","(net.art)"],
       body:"Escritura digital y poesía electrónica: Wordtoys — obra de etcéteras, listas que no se cierran nunca." },
     { img:"l-2-vns.jpg",   title:"VNS Matrix",
-      sub:["Australia","(anglosajona)","(colectivo)","(citada por Zafra)","(ref. vista en clase)","(manifiesto)"],
+      sub:["Australia","(anglosajona)","(colectivo)","(artista)","(citada por Zafra)","(ref. vista en clase)","(manifiesto)","(net.art)"],
       body:"Cyberfeminist Manifesto: vagabundeo irónico por el ciberespacio, rechazo a todo mapa fijo. Fundadoras del ciberfeminismo como práctica artística." },
     null, null
   ],
@@ -1583,16 +1668,16 @@ const REFS = {
       sub:["Argentina","(latinoamericana)","(colectivo)","2018"],
       body:"Como práctica de multitud en red: identidad colectiva sin centro, multiplicidad que actúa." },
     { img:"m-2-pagola.jpg",     title:"Lila Pagola",
-      sub:["Argentina","(latinoamericana)","(profesora)"],
+      sub:["Argentina","(latinoamericana)","(artista)","(investigadora)","(profesora)"],
       body:"Investigadora y artista de cultura libre, trabaja sobre producción colaborativa y procomún digital." },
     null, null
   ],
   13: [ // N · Nómade
     { img:"n-1-ullman.gif",  title:"Amalia Ulman",
-      sub:[],
+      sub:["Argentina/España","(latinoamericana)","(europea)","(artista)","(net.art)","(video)"],
       body:"Ethira (2013) era una plataforma de redes sociales para iPhone que permitía a los usuarios publicar mensajes anónimos en un foro público, con la salvedad de que desaparecerían poco después de su publicación." },
     { img:"n-2-taquini.jpg", title:"Graciela Taquini",
-      sub:["Argentina","(latinoamericana)","(artista)","(profesora)","(net.art)"],
+      sub:["Argentina","(latinoamericana)","(artista)","(investigadora)","(profesora)","(net.art)","(video)"],
       body:"Video y net.art, trabaja sobre la obsolescencia de los medios y la memoria efímera de lo digital." },
     null, null
   ],

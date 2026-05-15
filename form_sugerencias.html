@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SUGERIR NETIANA</title>
+<link rel="canonical" href="https://netianas.vercel.app/form_sugerencias.html">
 <!-- EmailJS SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
@@ -387,7 +388,7 @@ input.error, textarea.error {
 <div class="page" id="form-page">
 
   <div class="hd">
-    <div class="hd-back" onclick="history.back()">← volver al rizoma</div>
+    <div class="hd-back" onclick="window.location.href='index.html?skip=1'">← volver al rizoma</div>
     <div class="hd-title">SUGERIR <span class="mg">NETIANA</span></div>
     <div class="hd-sub">
       ¿Encontraste una referente que encaja en el rizoma?<br>
@@ -660,9 +661,9 @@ document.getElementById('suggestion-form').addEventListener('submit', async e =>
 
   try {
     // EmailJS — reemplazá los tres valores con los de tu cuenta
-    const SERVICE_ID  = 'TU_SERVICE_ID';   // ej: 'service_abc123'
-    const TEMPLATE_ID = 'TU_TEMPLATE_ID';  // ej: 'template_xyz789'
-    const PUBLIC_KEY  = 'TU_PUBLIC_KEY';   // ej: 'user_AbCdEfGh'
+    const SERVICE_ID  = 'service_yhqgs6k';
+    const TEMPLATE_ID = 'template_9tvcqnd';
+    const PUBLIC_KEY  = 's-qJf0of7dIG085Ex';
 
     await emailjs.send(SERVICE_ID, TEMPLATE_ID, payload, PUBLIC_KEY);
 
