@@ -1208,10 +1208,9 @@ const BOOT = [
 ];
 
 // ── BOOT: skip to home if coming from form ──
-if (new URLSearchParams(window.location.search).get('skip') === '1') {
-  document.getElementById('boot').style.display = 'none';
-  goHome();
-} else {
+// NOTE: called at end of script after all functions are defined
+const _skipBoot = new URLSearchParams(window.location.search).get('skip') === '1';
+if (!_skipBoot) {
   (function runBoot() {
   const log = document.getElementById('boot-log');
   let i = 0;
@@ -2007,6 +2006,14 @@ function openOv(tag) {
 
 function closeOv() {
   document.getElementById('mob-ov').classList.remove('on');
+}
+
+// ── Execute skip here, after all functions are defined ──
+if (_skipBoot) {
+  document.getElementById('boot').style.display = 'none';
+  buildHomeGrid();
+  buildSidebar();
+  goHome();
 }
 </script>
 </body>
