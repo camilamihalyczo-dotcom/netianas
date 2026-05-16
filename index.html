@@ -1207,11 +1207,8 @@ const BOOT = [
   { s:"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", c:"" },
 ];
 
-// ── BOOT: skip to home if coming from form ──
-const _skipBoot = new URLSearchParams(window.location.search).get('skip') === '1';
-
-if (!_skipBoot) {
-  (function runBoot() {
+// ── BOOT ──
+(function runBoot() {
   const log = document.getElementById('boot-log');
   let i = 0;
   function next() {
@@ -1231,7 +1228,6 @@ if (!_skipBoot) {
   }
   next();
 })();
-} // end skip else
 
 /* ══════════════════════════════════════
    VIEW MANAGEMENT
@@ -2006,14 +2002,6 @@ function openOv(tag) {
 
 function closeOv() {
   document.getElementById('mob-ov').classList.remove('on');
-}
-
-// ── Skip boot: runs HERE after every function is defined ──
-if (_skipBoot) {
-  document.getElementById('boot').style.display = 'none';
-  buildHomeGrid();
-  buildSidebar();
-  goHome();
 }
 </script>
 </body>
