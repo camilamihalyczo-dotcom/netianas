@@ -1219,11 +1219,11 @@ const BOOT = [
     const el = document.createElement('div');
     el.className = 'boot-line ' + BOOT[i].c;
     el.textContent = BOOT[i].s;
-    const dur = Math.max(60, BOOT[i].s.length * 17);
+    const dur = Math.max(20, BOOT[i].s.length * 4);
     el.style.animationDuration = dur + 'ms';
     el.style.animation = `typer ${dur}ms linear both`;
     log.appendChild(el);
-    setTimeout(next, dur + 30);
+    setTimeout(next, dur + 8);
     i++;
   }
   next();
