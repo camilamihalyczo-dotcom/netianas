@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>PANEL // SUGERENCIAS</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
+
+:root {
+  --black: #050505;
+  --green: #00ff41;
+  --gd: #00aa2a;
+  --gf: #001a00;
+  --mag: #ff00ff;
+  --magd: #880088;
+  --cyan: #00ffff;
+  --white: #e0ffe0;
+  --red: #ff3333;
+  --amber: #ffaa00;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  min-height: 100%;
+  background: var(--black);
+  color: var(--green);
+  font-family: 'Share Tech Mono', monospace;
+  cursor: crosshair;
+}
+
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px);
+  pointer-events: none;
+  z-index: 9000;
+}
+
+#scan {
+  position: fixed; left: 0; right: 0; height: 3px;
+  background: linear-gradient(transparent, rgba(0,255,65,0.08), transparent);
+  pointer-events: none; z-index: 8999;
+  animation: scanmove 7s linear infinite;
+}
+@keyframes scanmove { 0%{top:-2%} 100%{top:102%} }
+@keyframes fadein { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+@keyframes glitch {
+  0%,88%,100%{transform:translate(0);clip-path:none}
+  89%{transform:translate(-3px,1px);clip-path:inset(15% 0 60% 0)}
+  91%{transform:translate(3px,-1px);clip-path:inset(70% 0 5% 0)}
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: clamp(1.5rem, 5vw, 3rem) clamp(1rem, 4vw, 2rem);
+  animation: fadein .3s ease;
+}
+
+/* ── HEADER ── */
+.hd { border-bottom: 1px solid var(--gd); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+.hd-title {
+  font-family: 'VT323', monospace;
+  font-size: clamp(2rem, 6vw, 3rem);
+  color: var(--green);
+  text-shadow: 0 0 15px var(--green);
+  animation: glitch 10s infinite;
+  line-height: 1;
+  margin-bottom: .3rem;
+}
+.hd-title .mg { color: var(--mag); text-shadow: 0 0 12px var(--mag); }
+.hd-sub { font-size: clamp(.75rem, 2vw, .88rem); color: var(--gd); letter-spacing: .1em; line-height: 1.7; }
+
+/* ── LOGIN ── */
+.gate { max-width: 460px; margin-top: 2rem; }
+.gate-label { font-size: .82rem; color: var(--green); letter-spacing: .08em; display: block; margin-bottom: .5rem; }
+.gate-hint { font-size: .75rem; color: var(--gd); line-height: 1.6; margin-bottom: .8rem; }
+input[type="password"], input[type="text"] {
+  width: 100%;
+  background: var(--gf);
+  border: 1px solid #003300;
+  border-bottom: 1px solid var(--gd);
+  color: var(--white);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: .95rem;
+  padding: .65rem .9rem;
+  outline: none;
+  letter-spacing: .04em;
+  caret-color: var(--green);
+}
+input:focus { border-color: var(--green); box-shadow: 0 0 10px rgba(0,255,65,.08); }
+
+.btn {
+  background: none;
+  border: 1px solid var(--green);
+  color: var(--green);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: .85rem;
+  padding: .55rem 1.1rem;
+  cursor: pointer;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  transition: all .12s;
+  white-space: nowrap;
+}
+.btn:hover:not(:disabled) { border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 12px rgba(0,255,255,.15); }
+.btn:disabled { opacity: .35; cursor: not-allowed; }
+.btn-ok { border-color: var(--green); color: var(--green); }
+.btn-ok:hover:not(:disabled) { background: rgba(0,255,65,.08); }
+.btn-no { border-color: var(--red); color: var(--red); }
+.btn-no:hover:not(:disabled) { border-color: var(--red); color: #fff; background: rgba(255,51,51,.15); box-shadow: 0 0 12px rgba(255,51,51,.2); }
+.btn-sm { font-size: .75rem; padding: .35rem .8rem; }
+
+/* ── TABS ── */
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.2rem; }
+.tab {
+  background: none; border: 1px solid #003300; color: var(--gd);
+  font-family: 'Share Tech Mono', monospace; font-size: .8rem;
+  padding: .4rem .9rem; cursor: pointer; letter-spacing: .06em; transition: all .1s;
+}
+.tab:hover { border-color: var(--cyan); color: var(--cyan); }
+.tab.on { border-color: var(--mag); color: var(--green); background: #150015; }
+.tab .cnt { color: var(--magd); margin-left: .4rem; }
+
+/* ── TOOLBAR ── */
+.toolbar { display:flex; align-items:center; gap:.8rem; flex-wrap:wrap; margin-bottom:1.2rem; }
+.toolbar .spacer { flex: 1; }
+.status { font-size: .75rem; color: var(--gd); letter-spacing: .06em; }
+
+/* ── CARDS ── */
+.card {
+  border: 1px solid #002200;
+  border-left: 2px solid var(--magd);
+  background: #080808;
+  padding: 1rem 1.1rem;
+  margin-bottom: .9rem;
+  animation: fadein .25s ease both;
+}
+.card.busy { opacity: .4; pointer-events: none; }
+.card-hd { display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap; margin-bottom: .6rem; }
+.card-id { font-family: 'VT323', monospace; font-size: 1.2rem; color: var(--magd); }
+.card-name { font-size: 1rem; color: var(--green); letter-spacing: .04em; word-break: break-word; }
+.card-date { font-size: .72rem; color: #004400; margin-left: auto; white-space: nowrap; }
+.card-row { font-size: .82rem; color: var(--white); line-height: 1.7; margin-bottom: .4rem; word-break: break-word; }
+.card-row .k { color: var(--gd); letter-spacing: .08em; text-transform: uppercase; font-size: .72rem; display: block; }
+.card-row a { color: var(--cyan); text-decoration: none; border-bottom: 1px dotted var(--cyan); }
+.card-row a:hover { text-shadow: 0 0 8px var(--cyan); }
+.chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: .2rem; }
+.chip { border: 1px solid #003300; color: var(--cyan); font-size: .72rem; padding: 2px 8px; letter-spacing: .03em; }
+.chip.net { border-color: var(--magd); color: var(--mag); }
+.chip.nuevo { border-color: var(--amber); color: var(--amber); }
+.card-actions { display: flex; gap: .6rem; margin-top: .9rem; padding-top: .8rem; border-top: 1px solid #001100; flex-wrap: wrap; align-items: center; }
+
+.badge { font-size: .7rem; padding: 2px 8px; border: 1px solid; letter-spacing: .08em; text-transform: uppercase; }
+.badge.pendiente { border-color: var(--amber); color: var(--amber); }
+.badge.aprobada  { border-color: var(--green); color: var(--green); }
+.badge.rechazada { border-color: var(--red); color: var(--red); }
+
+/* ── ESTADOS ── */
+.empty { color: var(--gd); font-size: .85rem; letter-spacing: .06em; padding: 2.5rem 0; text-align: center; line-height: 1.8; }
+.err {
+  border: 1px solid var(--red); border-left: 3px solid var(--red);
+  color: var(--red); background: rgba(255,51,51,.05);
+  font-size: .82rem; padding: .8rem 1rem; margin-bottom: 1rem; line-height: 1.6;
+}
+.spinner {
+  display: inline-block; width: 11px; height: 11px;
+  border: 2px solid #003300; border-top-color: var(--green);
+  border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle;
+}
+.warn-box {
+  border: 1px solid var(--amber); border-left: 3px solid var(--amber);
+  background: rgba(255,170,0,.04); color: var(--amber);
+  font-size: .75rem; padding: .7rem .9rem; margin-bottom: 1.2rem; line-height: 1.7;
+}
+.hide { display: none !important; }
+
+/* ── EXPORT ── */
+.export-box { margin-top: 1.5rem; border-top: 1px solid var(--gf); padding-top: 1rem; }
+.export-box h3 { font-size: .78rem; color: var(--magd); letter-spacing: .14em; text-transform: uppercase; font-weight: normal; margin-bottom: .5rem; }
+textarea.export {
+  width: 100%; min-height: 150px; background: var(--gf); border: 1px solid #003300;
+  color: var(--white); font-family: 'Share Tech Mono', monospace; font-size: .75rem;
+  padding: .7rem; outline: none; resize: vertical; line-height: 1.6;
+}
+</style>
+</head>
+<body>
+<div id="scan"></div>
+
+<div class="page">
+
+  <div class="hd">
+    <div class="hd-title">PANEL <span class="mg">//</span> SUGERENCIAS</div>
+    <div class="hd-sub">
+      N(H)ACER MUJER EN INTERNET — moderación del rizoma<br>
+      <span id="api-label" style="color:#004400"></span>
+    </div>
+  </div>
+
+  <!-- ── GATE ── -->
+  <div id="gate" class="gate">
+    <div class="warn-box">
+      Esta página guarda el API key solamente en la memoria de esta pestaña
+      (sessionStorage). Se borra al cerrarla. No la abras en compus compartidas
+      y no publiques el key en ningún lado.
+    </div>
+    <label class="gate-label" for="key">ADMIN_API_KEY</label>
+    <div class="gate-hint">
+      Es el valor que pusiste en la variable de entorno <b>ADMIN_API_KEY</b> de Railway.
+    </div>
+    <input type="password" id="key" placeholder="pegá el key acá" autocomplete="off" spellcheck="false">
+    <div id="gate-err" class="err hide" style="margin-top:.8rem"></div>
+    <div style="margin-top:.9rem; display:flex; gap:.6rem; align-items:center;">
+      <button class="btn" id="gate-btn">[ entrar ]</button>
+      <span id="gate-status" class="status"></span>
+    </div>
+  </div>
+
+  <!-- ── PANEL ── -->
+  <div id="panel" class="hide">
+    <div class="tabs">
+      <button class="tab on" data-estado="pendiente">pendientes<span class="cnt" data-cnt="pendiente"></span></button>
+      <button class="tab" data-estado="aprobada">aprobadas<span class="cnt" data-cnt="aprobada"></span></button>
+      <button class="tab" data-estado="rechazada">rechazadas<span class="cnt" data-cnt="rechazada"></span></button>
+    </div>
+
+    <div class="toolbar">
+      <button class="btn btn-sm" id="reload">[ recargar ]</button>
+      <span class="spacer"></span>
+      <span class="status" id="status"></span>
+      <button class="btn btn-sm" id="logout">[ salir ]</button>
+    </div>
+
+    <div id="err" class="err hide"></div>
+    <div id="list"></div>
+
+    <div class="export-box hide" id="export-box">
+      <h3>// JSON para refs_sugeridas.json</h3>
+      <div class="gate-hint">
+        Las aprobadas en el formato que espera <b>refs_sugeridas.json</b>.
+        Copiá, pegá en el archivo, completá <b>img</b> y ajustá el <b>body</b> si hace falta.
+      </div>
+      <div class="warn-box">
+        Ojo: <b>index.html</b> renderiza los referentes con innerHTML, así que
+        cualquier etiqueta HTML que quede en este JSON se va a ejecutar en el sitio.
+        Leé el texto antes de pegarlo y sacá cualquier <b>&lt;script&gt;</b>,
+        <b>&lt;img&gt;</b> u <b>onerror=</b> que aparezca.
+      </div>
+      <textarea class="export" id="export" readonly spellcheck="false"></textarea>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── CONFIG API ──────────────────────────────────────────────
+// Cuando deploees en Railway, cambiá la URL de producción.
+const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+  ? 'http://localhost:3000'
+  : 'https://TU-API.up.railway.app';   // <<< CAMBIAR tras deployar en Railway
+
+document.getElementById('api-label').textContent = '// ' + API_BASE;
+
+const LETRAS = 'ABCDEFGHIJKLMN'.split('');
+
+let apiKey  = sessionStorage.getItem('netianas_admin_key') || '';
+let current = 'pendiente';
+const counts = { pendiente: null, aprobada: null, rechazada: null };
+
+const $ = id => document.getElementById(id);
+
+// ── HTTP ────────────────────────────────────────────────────
+async function api(path, options = {}) {
+  const res = await fetch(`${API_BASE}${path}`, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+      ...(options.headers || {}),
+    },
+  });
+  let data = {};
+  try { data = await res.json(); } catch (_) {}
+  if (res.status === 401) { throw new Error('UNAUTHORIZED'); }
+  if (!res.ok || !data.ok) { throw new Error(data.error || `el servidor respondió ${res.status}`); }
+  return data;
+}
+
+// ── LOGIN ───────────────────────────────────────────────────
+async function entrar(key) {
+  const gateErr = $('gate-err');
+  gateErr.classList.add('hide');
+  $('gate-status').innerHTML = '<span class="spinner"></span>';
+  $('gate-btn').disabled = true;
+
+  apiKey = key;
+  try {
+    await api('/api/sugerencias?estado=pendiente');
+    sessionStorage.setItem('netianas_admin_key', key);
+    $('gate').classList.add('hide');
+    $('panel').classList.remove('hide');
+    await cargar();
+  } catch (e) {
+    apiKey = '';
+    sessionStorage.removeItem('netianas_admin_key');
+    gateErr.textContent = e.message === 'UNAUTHORIZED'
+      ? '// key incorrecta'
+      : `// no se pudo conectar con la API: ${e.message}`;
+    gateErr.classList.remove('hide');
+  } finally {
+    $('gate-status').textContent = '';
+    $('gate-btn').disabled = false;
+  }
+}
+
+$('gate-btn').addEventListener('click', () => {
+  const k = $('key').value.trim();
+  if (!k) return;
+  entrar(k);
+});
+$('key').addEventListener('keydown', e => { if (e.key === 'Enter') $('gate-btn').click(); });
+
+$('logout').addEventListener('click', () => {
+  apiKey = '';
+  sessionStorage.removeItem('netianas_admin_key');
+  $('key').value = '';
+  $('panel').classList.add('hide');
+  $('gate').classList.remove('hide');
+});
+
+// ── RENDER ──────────────────────────────────────────────────
+// Todo con textContent / createElement: las sugerencias las escribe
+// cualquiera desde el formulario público, así que nunca las inyectamos
+// como HTML.
+function el(tag, cls, text) {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text != null) n.textContent = text;
+  return n;
+}
+
+function fecha(iso) {
+  try {
+    return new Date(iso).toLocaleString('es-AR', {
+      day: '2-digit', month: '2-digit', year: 'numeric',
+      hour: '2-digit', minute: '2-digit',
+    });
+  } catch (_) { return iso || ''; }
+}
+
+function chipRow(items, cls) {
+  const box = el('div', 'chips');
+  (items || []).forEach(t => box.appendChild(el('span', 'chip' + (cls ? ' ' + cls : ''), t)));
+  return box;
+}
+
+function campo(label, valor) {
+  const row = el('div', 'card-row');
+  row.appendChild(el('span', 'k', label));
+  row.appendChild(document.createTextNode(valor));
+  return row;
+}
+
+function renderCard(s) {
+  const card = el('div', 'card');
+  card.dataset.id = s.id;
+
+  const hd = el('div', 'card-hd');
+  hd.appendChild(el('span', 'card-id', '#' + s.id));
+  hd.appendChild(el('span', 'card-name', s.nombre));
+  hd.appendChild(el('span', 'badge ' + s.estado, s.estado));
+  hd.appendChild(el('span', 'card-date', fecha(s.created_at)));
+  card.appendChild(hd);
+
+  if (s.link) {
+    const row = el('div', 'card-row');
+    row.appendChild(el('span', 'k', 'link'));
+    // Solo http(s) — evitamos javascript: y data: en el href
+    if (/^https?:\/\//i.test(s.link)) {
+      const a = el('a', null, s.link);
+      a.href = s.link;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer nofollow';
+      row.appendChild(a);
+    } else {
+      row.appendChild(document.createTextNode(s.link));
+    }
+    card.appendChild(row);
+  }
+
+  const netRow = el('div', 'card-row');
+  netRow.appendChild(el('span', 'k', 'netianas'));
+  netRow.appendChild(chipRow(s.netianas, 'net'));
+  card.appendChild(netRow);
+
+  card.appendChild(campo('por qué', s.por_que));
+
+  if (s.tags && s.tags.length) {
+    const r = el('div', 'card-row');
+    r.appendChild(el('span', 'k', 'tags'));
+    r.appendChild(chipRow(s.tags));
+    card.appendChild(r);
+  }
+  if (s.tags_nuevos && s.tags_nuevos.length) {
+    const r = el('div', 'card-row');
+    r.appendChild(el('span', 'k', 'tags nuevos'));
+    r.appendChild(chipRow(s.tags_nuevos, 'nuevo'));
+    card.appendChild(r);
+  }
+  if (s.contacto) card.appendChild(campo('contacto', s.contacto));
+
+  const actions = el('div', 'card-actions');
+  if (s.estado !== 'aprobada') {
+    const b = el('button', 'btn btn-sm btn-ok', '[ aprobar ]');
+    b.addEventListener('click', () => cambiarEstado(s.id, 'aprobada', card));
+    actions.appendChild(b);
+  }
+  if (s.estado !== 'rechazada') {
+    const b = el('button', 'btn btn-sm btn-no', '[ rechazar ]');
+    b.addEventListener('click', () => cambiarEstado(s.id, 'rechazada', card));
+    actions.appendChild(b);
+  }
+  if (s.estado !== 'pendiente') {
+    const b = el('button', 'btn btn-sm', '[ volver a pendiente ]');
+    b.addEventListener('click', () => cambiarEstado(s.id, 'pendiente', card));
+    actions.appendChild(b);
+  }
+  card.appendChild(actions);
+
+  return card;
+}
+
+// ── ACCIONES ────────────────────────────────────────────────
+async function cambiarEstado(id, estado, card) {
+  if (estado === 'rechazada' && !confirm(`¿Rechazar la sugerencia #${id}?`)) return;
+  card.classList.add('busy');
+  try {
+    await api(`/api/sugerencias/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ estado }),
+    });
+    counts.pendiente = counts.aprobada = counts.rechazada = null;
+    await cargar();
+  } catch (e) {
+    card.classList.remove('busy');
+    mostrarError(e);
+  }
+}
+
+function mostrarError(e) {
+  if (e.message === 'UNAUTHORIZED') {
+    $('logout').click();
+    $('gate-err').textContent = '// la sesión expiró o el key dejó de ser válido';
+    $('gate-err').classList.remove('hide');
+    return;
+  }
+  $('err').textContent = `// ${e.message}`;
+  $('err').classList.remove('hide');
+}
+
+async function cargar() {
+  $('err').classList.add('hide');
+  $('status').innerHTML = '<span class="spinner"></span> cargando…';
+  const list = $('list');
+
+  try {
+    const data = await api(`/api/sugerencias?estado=${current}`);
+    counts[current] = data.total;
+    actualizarContadores();
+
+    list.textContent = '';
+    if (!data.data.length) {
+      list.appendChild(el('div', 'empty', `// no hay sugerencias en estado "${current}"`));
+    } else {
+      data.data.forEach(s => list.appendChild(renderCard(s)));
+    }
+
+    $('status').textContent = `${data.total} ${data.total === 1 ? 'sugerencia' : 'sugerencias'}`;
+    renderExport(current === 'aprobada' ? data.data : null);
+  } catch (e) {
+    $('status').textContent = '';
+    list.textContent = '';
+    mostrarError(e);
+  }
+}
+
+function actualizarContadores() {
+  document.querySelectorAll('[data-cnt]').forEach(n => {
+    const v = counts[n.dataset.cnt];
+    n.textContent = v == null ? '' : `(${v})`;
+  });
+}
+
+// ── EXPORT a refs_sugeridas.json ────────────────────────────
+function renderExport(aprobadas) {
+  const box = $('export-box');
+  if (!aprobadas || !aprobadas.length) { box.classList.add('hide'); return; }
+
+  const out = {};
+  aprobadas.forEach(s => {
+    (s.netianas || []).forEach(n => {
+      // "(C) Cyborg" → índice 2
+      const m = /\(([A-N])\)/i.exec(n);
+      if (!m) return;
+      const idx = LETRAS.indexOf(m[1].toUpperCase());
+      if (idx < 0) return;
+      (out[idx] = out[idx] || []).push({
+        img: '',
+        title: s.nombre,
+        sub: [...(s.tags || []), ...(s.tags_nuevos || [])]
+          .map(t => t.startsWith('(') ? t : `(${t})`)
+          .concat('(ref. sugerida)'),
+        body: s.por_que,
+      });
+    });
+  });
+
+  box.classList.remove('hide');
+  $('export').value = JSON.stringify(out, null, 2);
+}
+
+// ── TABS ────────────────────────────────────────────────────
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
+    t.classList.add('on');
+    current = t.dataset.estado;
+    cargar();
+  });
+});
+
+$('reload').addEventListener('click', cargar);
+
+// ── AUTOSTART ───────────────────────────────────────────────
+if (apiKey) {
+  entrar(apiKey);
+} else {
+  $('key').focus();
+}
+</script>
+</body>
+</html>

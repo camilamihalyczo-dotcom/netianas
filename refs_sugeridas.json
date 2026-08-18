@@ -1,0 +1,50 @@
+{
+  "_instrucciones": {
+    "uso": "Cada key es el índice de la netiana (0=A, 1=B, ..., 13=N). Cada entrada tiene img, title, sub y body. Para publicar una sugerencia aprobada: agregar la entrada al índice correcto y guardar. La página la carga automáticamente.",
+    "indices": {
+      "0": "A · Artivista",
+      "1": "B · Buscadora",
+      "2": "C · Cyborg",
+      "3": "D · Doméstica",
+      "4": "E · Esteganógrafa",
+      "5": "F · Flâneuse",
+      "6": "G · Geek",
+      "7": "H · Hacktivista",
+      "8": "I · Invisible",
+      "9": "J · Jinetera",
+      "10": "K · Karaokista",
+      "11": "L · Lurker",
+      "12": "M · Multitud",
+      "13": "N · Nómade"
+    },
+    "tags_disponibles": [
+      "latinoamericana", "europea", "anglosajona", "asiática", "africana",
+      "colectivo", "artista", "escritora", "investigadora", "profesora",
+      "creadora/comunicadora de contenido",
+      "net.art", "video", "performance", "manifiesto",
+      "citada por Zafra", "ref. vista en clase", "ref. sugerida",
+      "poder corporativo", "esteganografía", "limen", "patriarcado digital",
+      "software libre", "vigilancia", "biopolítica", "Haraway", "cuerpo-máquina",
+      "cyborg", "frontera", "algoritmo", "dato", "academia", "legitimidad",
+      "pantalla", "jardín secreto", "virtualidad", "cuerpo", "Kristeva",
+      "Butler", "performatividad", "cuerpo-texto", "ficción", "desidentificación",
+      "máscara", "avatar", "representación", "teatralidad digital", "posthumano",
+      "queer", "exceso", "no-normativo", "metaficción", "ironía", "autoconciencia",
+      "multiplicidad", "identidad online", "presencia", "tiempo", "rizoma",
+      "líneas de fuga", "Deleuze", "incontabilidad", "devenir", "tipografía",
+      "formato", "archivo", "apertura", "indeterminación", "etcétera",
+      "meritocracia", "devenir-animal", "efímero", "identidad"
+    ],
+    "nota_img": "Las imágenes van en la carpeta img/ al mismo nivel que index.html. Si no hay imagen, dejar img como string vacío — se muestra placeholder."
+  },
+
+  "0": [
+    {
+      "_ejemplo": "BORRAR ESTA ENTRADA — es solo un ejemplo de cómo se carga una sugerencia aprobada",
+      "img": "",
+      "title": "Nombre de la referente",
+      "sub": ["País", "(latinoamericana)", "(artista)", "(ref. sugerida)"],
+      "body": "Descripción breve de su práctica y por qué encaja con esta netiana."
+    }
+  ]
+}
