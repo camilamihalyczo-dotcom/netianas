@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SUGERIR NETIANA</title>
+<link rel="canonical" href="https://netianas.vercel.app/form_sugerencias.html">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
 
@@ -385,7 +386,7 @@ input.error, textarea.error {
 <div class="page" id="form-page">
 
   <div class="hd">
-    <div class="hd-back" onclick="history.back()">← volver al rizoma</div>
+    <div class="hd-back" onclick="window.location.href='index.html'">← volver al rizoma</div>
     <div class="hd-title">SUGERIR <span class="mg">NETIANA</span></div>
     <div class="hd-sub">
       ¿Encontraste una referente que encaja en el rizoma?<br>
@@ -512,8 +513,7 @@ input.error, textarea.error {
 
 <script>
 // ── CONFIG API ──────────────────────────────────────────────
-// Cuando deploees en Railway, cambiá PROD por la URL real.
-// Ej: 'https://netianas-api-production.up.railway.app'
+// Cuando deploees en Railway, cambiá la URL de producción.
 const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
   ? 'http://localhost:3000'
   : 'https://TU-API.up.railway.app';   // <<< CAMBIAR tras deployar en Railway
@@ -648,7 +648,7 @@ document.getElementById('suggestion-form').addEventListener('submit', async e =>
   btn.disabled  = true;
   loading.classList.add('on');
 
-  // La API espera arrays (columnas TEXT[]), no strings con join.
+  // La API espera arrays (las columnas son TEXT[]), no strings con join.
   const nets    = [...selectedNets].map(i => `${NETIANAS[i].l} ${NETIANAS[i].a}`);
   const tags    = [...selectedTags];
   const newTags = document.getElementById('f-newtag').value
