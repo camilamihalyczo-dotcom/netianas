@@ -38,13 +38,4 @@
     "nota_img": "Las imágenes van en la carpeta img/ al mismo nivel que index.html. Si no hay imagen, dejar img como string vacío — se muestra placeholder."
   },
 
-  "0": [
-    {
-      "_ejemplo": "BORRAR ESTA ENTRADA — es solo un ejemplo de cómo se carga una sugerencia aprobada",
-      "img": "",
-      "title": "Nombre de la referente",
-      "sub": ["País", "(latinoamericana)", "(artista)", "(ref. sugerida)"],
-      "body": "Descripción breve de su práctica y por qué encaja con esta netiana."
-    }
-  ]
 }
