@@ -211,7 +211,7 @@ textarea.export {
     </div>
     <label class="gate-label" for="key">ADMIN_API_KEY</label>
     <div class="gate-hint">
-      Es el valor que pusiste en la variable de entorno <b>ADMIN_API_KEY</b> de Railway.
+      Es el valor que pusiste en la variable de entorno <b>ADMIN_API_KEY</b> de Vercel.
     </div>
     <input type="password" id="key" placeholder="pegá el key acá" autocomplete="off" spellcheck="false">
     <div id="gate-err" class="err hide" style="margin-top:.8rem"></div>
@@ -259,10 +259,10 @@ textarea.export {
 
 <script>
 // ── CONFIG API ──────────────────────────────────────────────
-// Cuando deploees en Railway, cambiá la URL de producción.
+// Cuando deploees en Vercel, cambiá la URL de producción.
 const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
   ? 'http://localhost:3000'
-  : 'https://TU-API.up.railway.app';   // <<< CAMBIAR tras deployar en Railway
+  : 'https://TU-API.vercel.app';   // <<< CAMBIAR por la URL real de Vercel
 
 document.getElementById('api-label').textContent = '// ' + API_BASE;
 
