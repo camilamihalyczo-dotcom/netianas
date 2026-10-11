@@ -389,12 +389,17 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
 
   <!-- ══ GATE ══ -->
   <div id="gate" class="gate">
-    <label class="gate-label" for="key">CONTRASEÑA</label>
-    <input type="password" id="key" placeholder="contraseña de admin" autocomplete="off" spellcheck="false">
+    <label class="gate-label" for="gate-email">EMAIL</label>
+    <input type="email" id="gate-email" placeholder="tu@mail.com" autocomplete="username" spellcheck="false" style="margin-bottom:.7rem">
+    <label class="gate-label" for="gate-pwd">CONTRASEÑA</label>
+    <input type="password" id="gate-pwd" placeholder="••••••••" autocomplete="current-password" spellcheck="false">
     <div id="gate-err" class="err hide" style="margin-top:.8rem"></div>
     <div style="margin-top:.9rem;display:flex;gap:.6rem;align-items:center;">
       <button class="btn" id="gate-btn">[ entrar ]</button>
-      <span id="gate-status" class="status"></span>
+      <span id="gate-status" class="status-bar"></span>
+    </div>
+    <div class="gate-hint" style="margin-top:1rem">
+      Los usuarios se crean desde Supabase → Authentication → Users → Invite user.
     </div>
   </div>
 
@@ -605,74 +610,166 @@ let sugEstado = 'pendiente';
 
 const $ = id => document.getElementById(id);
 
-// ── HTTP ────────────────────────────────────────────────────
-async function api(path, options = {}) {
-  const res = await fetch(`${API_BASE}${path}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`,
-      ...(options.headers || {}),
-    },
-  });
-  let data = {};
-  try { data = await res.json(); } catch (_) {}
-  if (res.status === 401) { throw new Error('UNAUTHORIZED'); }
-  if (!res.ok || !data.ok) { throw new Error(data.error || `el servidor respondió ${res.status}`); }
-  return data;
+// ══════════════════════════════════════════════════════════
+// LOGIN — Supabase Auth (email + contraseña)
+// La anon key es pública — está bien que esté en el código.
+// El acceso admin lo dan las políticas RLS en Supabase.
+// ══════════════════════════════════════════════════════════
+const SUPA_ANON = 'sb_publishable_VswGXVPWLFeByUpfyEws4w_PGbXobSH';
+
+function describeError(err) {
+  const msg = (err && err.message) || '';
+  if (msg.includes('Invalid login credentials')) return '// email o contraseña incorrectos';
+  if (msg.includes('Email not confirmed'))
+    return '// usuario sin confirmar — ir a Supabase → Authentication → Users y confirmarlo';
+  return '// error: ' + (msg || 'no se pudo conectar');
 }
 
-// ── LOGIN ───────────────────────────────────────────────────
-async function entrar(key) {
-  const gateErr = $('gate-err');
-  gateErr.classList.add('hide');
+async function mostrarPanel(session) {
+  // Usamos el mismo cliente (anon key) — el JWT del usuario autenticado
+  // le da acceso a las tablas según las políticas RLS "authenticated"
+  $('gate').classList.add('hide');
+  $('panel').classList.remove('hide');
+  $('db-label').textContent = '// ' + session.user.email + ' · conectado';
+  initUI();
+  await Promise.all([cargarSugerencias(), cargarReferentes()]);
+}
+
+// Un solo cliente para todo — auth + datos
+const authClient = window.supabase.createClient(SUPA_URL, SUPA_ANON);
+supabase = authClient;
+
+// Revisar si ya hay sesión activa
+authClient.auth.getSession().then(({ data }) => {
+  if (data.session) {
+    mostrarPanel(data.session);
+  } else {
+    $('gate-email').focus();
+  }
+});
+
+async function entrar() {
+  const email = $('gate-email').value.trim();
+  const pwd   = $('gate-pwd').value;
+  $('gate-err').classList.add('hide');
+  if (!email || !pwd) return;
+
   $('gate-status').innerHTML = '<span class="spinner"></span>';
   $('gate-btn').disabled = true;
 
-  apiKey = key;
   try {
-    await api('/api/sugerencias?estado=pendiente');
-    sessionStorage.setItem('netianas_admin_key', key);
-    $('gate').classList.add('hide');
-    $('panel').classList.remove('hide');
-    await cargar();
+    const { data, error } = await authClient.auth.signInWithPassword({ email, password: pwd });
+    if (error) throw error;
+    await mostrarPanel(data.session);
   } catch (e) {
-    apiKey = '';
-    sessionStorage.removeItem('netianas_admin_key');
-    gateErr.textContent = e.message === 'UNAUTHORIZED'
-      ? '// key incorrecta'
-      : `// no se pudo conectar con la API: ${e.message}`;
-    gateErr.classList.remove('hide');
+    $('gate-err').textContent = describeError(e);
+    $('gate-err').classList.remove('hide');
   } finally {
     $('gate-status').textContent = '';
     $('gate-btn').disabled = false;
   }
 }
 
-$('gate-btn').addEventListener('click', () => {
-  const k = $('key').value.trim();
-  if (!k) return;
-  entrar(k);
-});
-$('key').addEventListener('keydown', e => { if (e.key === 'Enter') $('gate-btn').click(); });
+$('gate-btn').addEventListener('click', entrar);
+$('gate-pwd').addEventListener('keydown', e => { if (e.key === 'Enter') entrar(); });
+$('gate-email').addEventListener('keydown', e => { if (e.key === 'Enter') $('gate-pwd').focus(); });
 
-$('logout').addEventListener('click', () => {
-  apiKey = '';
-  sessionStorage.removeItem('netianas_admin_key');
-  $('key').value = '';
+$('logout').addEventListener('click', async () => {
+  await authClient.auth.signOut();
+  supabase = null;
+  $('gate-email').value = '';
+  $('gate-pwd').value = '';
   $('panel').classList.add('hide');
   $('gate').classList.remove('hide');
+  $('db-label').textContent = '// cargando conexión…';
+  $('gate-email').focus();
 });
 
-// ── RENDER ──────────────────────────────────────────────────
-// Todo con textContent / createElement: las sugerencias las escribe
-// cualquiera desde el formulario público, así que nunca las inyectamos
-// como HTML.
-function el(tag, cls, text) {
-  const n = document.createElement(tag);
-  if (cls) n.className = cls;
-  if (text != null) n.textContent = text;
-  return n;
+// ══════════════════════════════════════════════════════════
+// UI INIT
+// ══════════════════════════════════════════════════════════
+function initUI() {
+  buildNetianaGrid();
+  buildTagsGrid();
+  buildRefFilter();
+  initImgUpload();
+}
+
+// ── Tabs principales ──
+document.querySelectorAll('.tab[data-tab]').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab[data-tab]').forEach(x => x.classList.remove('on'));
+    t.classList.add('on');
+    ['sugerencias','agregar','referentes'].forEach(id => $('tab-'+id).classList.add('hide'));
+    $('tab-' + t.dataset.tab).classList.remove('hide');
+  });
+});
+
+// ── Subtabs sugerencias ──
+document.querySelectorAll('.subtab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.subtab').forEach(x => x.classList.remove('on'));
+    t.classList.add('on');
+    sugEstado = t.dataset.estado;
+    cargarSugerencias();
+  });
+});
+
+$('sug-reload').addEventListener('click', cargarSugerencias);
+$('ref-reload').addEventListener('click', cargarReferentes);
+$('ref-filter-netiana').addEventListener('change', cargarReferentes);
+$('ref-filter-pub').addEventListener('change', cargarReferentes);
+
+// ── Textarea counter ──
+$('f-texto').addEventListener('input', () => {
+  $('f-texto-count').textContent = $('f-texto').value.length + ' / 800';
+});
+
+// ── Botones formulario ──
+$('agregar-submit').addEventListener('click', submitReferente);
+$('agregar-reset').addEventListener('click', resetForm);
+
+// ══════════════════════════════════════════════════════════
+// NETIANA GRID
+// ══════════════════════════════════════════════════════════
+function buildNetianaGrid() {
+  const grid = $('netiana-grid');
+  grid.innerHTML = '';
+  NETIANAS.forEach((n, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'netiana-btn';
+    btn.type = 'button';
+    btn.innerHTML = `<span class="letra">(${n.letra})</span>${n.nombre}`;
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.netiana-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedNetiana = { idx, letra: n.letra, nombre: n.nombre };
+    });
+    grid.appendChild(btn);
+  });
+}
+
+// ══════════════════════════════════════════════════════════
+// TAGS GRID
+// ══════════════════════════════════════════════════════════
+function buildTagsGrid() {
+  const grid = $('tags-existentes');
+  grid.innerHTML = '';
+  TAGS_RIZOMA.forEach((tag, i) => {
+    const id = 'tag_' + i;
+    const inp = document.createElement('input');
+    inp.type = 'checkbox'; inp.className = 'tag-check';
+    inp.id = id; inp.value = tag;
+    const lbl = document.createElement('label');
+    lbl.className = 'tag-label'; lbl.htmlFor = id;
+    lbl.textContent = tag;
+    grid.appendChild(inp);
+    grid.appendChild(lbl);
+  });
+}
+
+function getTagsSeleccionados() {
+  return [...document.querySelectorAll('.tag-check:checked')].map(c => c.value);
 }
 
 // ══════════════════════════════════════════════════════════
