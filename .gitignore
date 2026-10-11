@@ -1,0 +1,18 @@
+# El backend es su propio repo (github.com/camilamihalyczo-dotcom/netianas-api).
+# Vive acá adentro como carpeta pero NO se commitea en el repo del frontend.
+netianas-api/
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores
+.vscode/
+.idea/
+*.swp
+
+# Nunca subir secretos
+.env
+.env.local
+*.key

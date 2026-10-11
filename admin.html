@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>ADMIN // N(H)ACER MUJER EN INTERNET</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
+
+:root {
+  --black: #050505;
+  --green: #00ff41;
+  --gd:    #00aa2a;
+  --gf:    #001a00;
+  --mag:   #ff00ff;
+  --magd:  #880088;
+  --cyan:  #00ffff;
+  --white: #e0ffe0;
+  --red:   #ff3333;
+  --amber: #ffaa00;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  min-height: 100%;
+  background: var(--black);
+  color: var(--green);
+  font-family: 'Share Tech Mono', monospace;
+  cursor: crosshair;
+}
+
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px);
+  pointer-events: none;
+  z-index: 9000;
+}
+
+#scan {
+  position: fixed; left: 0; right: 0; height: 3px;
+  background: linear-gradient(transparent, rgba(0,255,65,0.08), transparent);
+  pointer-events: none; z-index: 8999;
+  animation: scanmove 7s linear infinite;
+}
+
+@keyframes scanmove { 0%{top:-2%} 100%{top:102%} }
+@keyframes fadein   { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+@keyframes glitch {
+  0%,88%,100%{transform:translate(0);clip-path:none}
+  89%{transform:translate(-3px,1px);clip-path:inset(15% 0 60% 0)}
+  91%{transform:translate(3px,-1px);clip-path:inset(70% 0 5% 0)}
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: clamp(1.5rem,5vw,3rem) clamp(1rem,4vw,2rem);
+  animation: fadein .3s ease;
+}
+
+/* ── HEADER ── */
+.hd { border-bottom: 1px solid var(--gd); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+.hd-title {
+  font-family: 'VT323', monospace;
+  font-size: clamp(2rem,6vw,3rem);
+  color: var(--green);
+  text-shadow: 0 0 15px var(--green);
+  animation: glitch 10s infinite;
+  line-height: 1; margin-bottom: .3rem;
+}
+.hd-title .mg { color: var(--mag); text-shadow: 0 0 12px var(--mag); }
+.hd-sub { font-size: .82rem; color: var(--gd); letter-spacing: .1em; line-height: 1.7; }
+
+/* ── LOGIN ── */
+.gate { max-width: 480px; margin-top: 2rem; }
+.gate-label { font-size: .82rem; color: var(--green); letter-spacing: .08em; display: block; margin-bottom: .4rem; margin-top: 1rem; }
+.gate-hint  { font-size: .75rem; color: var(--gd); line-height: 1.6; margin-bottom: .6rem; }
+
+/* ── INPUTS ── */
+input[type="password"],
+input[type="text"],
+input[type="url"],
+input[type="email"],
+textarea,
+select {
+  width: 100%;
+  background: var(--gf);
+  border: 1px solid #003300;
+  border-bottom: 1px solid var(--gd);
+  color: var(--white);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: .9rem;
+  padding: .6rem .9rem;
+  outline: none;
+  letter-spacing: .03em;
+  caret-color: var(--green);
+  display: block;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 10px rgba(0,255,65,.08);
+}
+select { cursor: pointer; }
+select option { background: #050505; }
+textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+
+/* ── BOTONES ── */
+.btn {
+  background: none;
+  border: 1px solid var(--green);
+  color: var(--green);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: .85rem;
+  padding: .55rem 1.1rem;
+  cursor: pointer;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  transition: all .12s;
+  white-space: nowrap;
+}
+.btn:hover:not(:disabled) { border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 12px rgba(0,255,255,.15); }
+.btn:disabled { opacity: .35; cursor: not-allowed; }
+.btn-ok { border-color: var(--green); color: var(--green); }
+.btn-ok:hover:not(:disabled) { background: rgba(0,255,65,.08); }
+.btn-no { border-color: var(--red); color: var(--red); }
+.btn-no:hover:not(:disabled) { border-color: var(--red); color:#fff; background: rgba(255,51,51,.15); }
+.btn-mag { border-color: var(--mag); color: var(--mag); }
+.btn-mag:hover:not(:disabled) { background: rgba(255,0,255,.08); }
+.btn-sm { font-size: .75rem; padding: .35rem .8rem; }
+
+/* ── TABS ── */
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.4rem; border-bottom: 1px solid #002200; padding-bottom: .8rem; }
+.tab {
+  background: none; border: 1px solid #003300; color: var(--gd);
+  font-family: 'Share Tech Mono', monospace; font-size: .82rem;
+  padding: .45rem 1rem; cursor: pointer; letter-spacing: .06em; transition: all .1s;
+}
+.tab:hover { border-color: var(--cyan); color: var(--cyan); }
+.tab.on { border-color: var(--mag); color: var(--green); background: #150015; }
+.tab .cnt { color: var(--magd); margin-left: .3rem; font-size: .75rem; }
+
+/* ── SUBTABS ── */
+.subtabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1rem; }
+.subtab {
+  background: none; border: 1px solid #002200; color: #005500;
+  font-family: 'Share Tech Mono', monospace; font-size: .75rem;
+  padding: .3rem .8rem; cursor: pointer; transition: all .1s;
+}
+.subtab:hover { border-color: var(--gd); color: var(--gd); }
+.subtab.on { border-color: var(--gd); color: var(--green); }
+
+/* ── TOOLBAR ── */
+.toolbar { display:flex; align-items:center; gap:.8rem; flex-wrap:wrap; margin-bottom:1.2rem; }
+.toolbar .spacer { flex: 1; }
+.status-bar { font-size: .75rem; color: var(--gd); letter-spacing: .06em; }
+
+/* ── CARDS de sugerencias ── */
+.card {
+  border: 1px solid #002200;
+  border-left: 2px solid var(--magd);
+  background: #080808;
+  padding: 1rem 1.1rem;
+  margin-bottom: .9rem;
+  animation: fadein .25s ease both;
+}
+.card.busy { opacity: .4; pointer-events: none; }
+.card-hd { display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap; margin-bottom: .6rem; }
+.card-id   { font-family: 'VT323', monospace; font-size: 1.2rem; color: var(--magd); }
+.card-name { font-size: 1rem; color: var(--green); letter-spacing: .04em; word-break: break-word; }
+.card-date { font-size: .72rem; color: #004400; margin-left: auto; white-space: nowrap; }
+.card-row  { font-size: .82rem; color: var(--white); line-height: 1.7; margin-bottom: .4rem; word-break: break-word; }
+.card-row .k { color: var(--gd); letter-spacing: .08em; text-transform: uppercase; font-size: .72rem; display: block; }
+.card-row a { color: var(--cyan); text-decoration: none; border-bottom: 1px dotted var(--cyan); }
+.card-row a:hover { text-shadow: 0 0 8px var(--cyan); }
+.chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: .2rem; }
+.chip      { border: 1px solid #003300; color: var(--cyan); font-size: .72rem; padding: 2px 8px; }
+.chip.net  { border-color: var(--magd); color: var(--mag); }
+.chip.nuevo{ border-color: var(--amber); color: var(--amber); }
+.card-actions { display: flex; gap: .6rem; margin-top: .9rem; padding-top: .8rem; border-top: 1px solid #001100; flex-wrap: wrap; align-items: center; }
+
+.badge { font-size: .7rem; padding: 2px 8px; border: 1px solid; letter-spacing: .08em; text-transform: uppercase; }
+.badge.pendiente { border-color: var(--amber); color: var(--amber); }
+.badge.aprobada  { border-color: var(--green); color: var(--green); }
+.badge.rechazada { border-color: var(--red);   color: var(--red); }
+
+/* ── FORMULARIO AGREGAR ── */
+.form-section {
+  border: 1px solid #002200;
+  border-left: 2px solid var(--gd);
+  background: #060606;
+  padding: 1.2rem 1.3rem;
+  margin-bottom: 1rem;
+  animation: fadein .2s ease;
+}
+.form-section h3 {
+  font-size: .75rem; color: var(--magd); letter-spacing: .16em;
+  text-transform: uppercase; margin-bottom: 1rem; font-weight: normal;
+}
+.form-row { margin-bottom: .9rem; }
+.form-label {
+  display: block; font-size: .75rem; color: var(--gd);
+  letter-spacing: .1em; text-transform: uppercase; margin-bottom: .4rem;
+}
+.form-label .req { color: var(--mag); margin-left: 2px; }
+.form-hint { font-size: .72rem; color: #005500; margin-top: .3rem; line-height: 1.5; }
+
+/* ── NETIANA SELECTOR ── */
+.netiana-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 6px;
+  margin-top: .4rem;
+}
+.netiana-btn {
+  background: var(--gf);
+  border: 1px solid #003300;
+  color: var(--gd);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: .78rem;
+  padding: .45rem .5rem;
+  cursor: pointer;
+  text-align: left;
+  transition: all .1s;
+  line-height: 1.3;
+}
+.netiana-btn .letra { font-family: 'VT323', monospace; font-size: 1.1rem; color: var(--green); display: block; }
+.netiana-btn:hover   { border-color: var(--cyan); color: var(--cyan); }
+.netiana-btn.selected{ border-color: var(--mag); color: var(--mag); background: #150015; }
+.netiana-btn.selected .letra { color: var(--mag); }
+
+/* ── TAGS CHECKBOXES ── */
+.tags-grid {
+  display: flex; flex-wrap: wrap; gap: 5px; margin-top: .4rem;
+}
+.tag-check { display: none; }
+.tag-label {
+  border: 1px solid #003300; color: var(--gd); font-size: .72rem;
+  padding: 3px 9px; cursor: pointer; transition: all .1s; user-select: none;
+}
+.tag-check:checked + .tag-label {
+  border-color: var(--cyan); color: var(--cyan); background: rgba(0,255,255,.06);
+}
+.tag-label:hover { border-color: var(--gd); color: var(--green); }
+
+/* ── IMAGEN UPLOAD ── */
+.img-drop {
+  border: 1px dashed #004400;
+  background: #030803;
+  padding: 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all .15s;
+  position: relative;
+}
+.img-drop:hover, .img-drop.drag { border-color: var(--green); background: #001a00; }
+.img-drop input[type="file"] {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer;
+  width: 100%; height: 100%; padding: 0; border: none; background: none;
+}
+.img-drop-text { font-size: .82rem; color: var(--gd); line-height: 2; pointer-events: none; }
+.img-drop-text strong { color: var(--green); display: block; font-size: 1rem; }
+
+.img-preview {
+  display: none; margin-top: .8rem;
+  border: 1px solid #003300; padding: .6rem;
+  background: #020602;
+}
+.img-preview.show { display: flex; gap: .8rem; align-items: flex-start; }
+.img-preview img {
+  max-width: 120px; max-height: 120px;
+  object-fit: contain; border: 1px solid #003300;
+  image-rendering: pixelated;
+}
+.img-preview-info { font-size: .75rem; color: var(--gd); line-height: 1.8; flex: 1; }
+.img-preview-info .name { color: var(--white); word-break: break-all; }
+.img-preview-info .size { }
+.img-preview-info .size.ok  { color: var(--green); }
+.img-preview-info .size.warn{ color: var(--amber); }
+.img-preview-info .size.over{ color: var(--red); animation: pulse 1s infinite; }
+
+.squoosh-box {
+  margin-top: .7rem;
+  border: 1px solid var(--amber); border-left: 3px solid var(--amber);
+  background: rgba(255,170,0,.04); padding: .8rem 1rem;
+  font-size: .78rem; color: var(--amber); line-height: 1.8; display: none;
+}
+.squoosh-box.show { display: block; }
+.squoosh-box a { color: var(--amber); border-bottom: 1px dotted var(--amber); }
+.squoosh-box a:hover { text-shadow: 0 0 8px var(--amber); }
+
+.url-alt { margin-top: .6rem; }
+.url-alt .url-alt-label {
+  font-size: .72rem; color: #005500; letter-spacing: .06em;
+  display: flex; align-items: center; gap: .5rem; cursor: pointer; margin-bottom: .4rem;
+}
+.url-alt .url-alt-label::before { content: '▶'; font-size: .6rem; }
+.url-alt.open .url-alt-label::before { content: '▼'; }
+.url-alt-input { display: none; }
+.url-alt.open .url-alt-input { display: block; }
+
+/* ── PROGRESS ── */
+.upload-progress {
+  display: none; margin-top: .6rem;
+  height: 3px; background: #002200;
+}
+.upload-progress.show { display: block; }
+.upload-progress-bar {
+  height: 100%; background: var(--green);
+  transition: width .2s; width: 0%;
+}
+
+/* ── REFERENTES LIST ── */
+.ref-card {
+  display: flex; gap: .8rem; align-items: flex-start;
+  border: 1px solid #002200; border-left: 2px solid #004400;
+  background: #070707; padding: .8rem 1rem; margin-bottom: .7rem;
+  animation: fadein .2s ease;
+}
+.ref-card img {
+  width: 60px; height: 60px; object-fit: cover;
+  border: 1px solid #003300; flex-shrink: 0;
+  image-rendering: pixelated;
+}
+.ref-card-img-placeholder {
+  width: 60px; height: 60px; border: 1px dashed #002200;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: .6rem; color: #003300; text-align: center;
+}
+.ref-card-body { flex: 1; min-width: 0; }
+.ref-card-top  { display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap; margin-bottom: .3rem; }
+.ref-card-letra{ font-family: 'VT323', monospace; font-size: 1.2rem; color: var(--mag); }
+.ref-card-title{ font-size: .9rem; color: var(--green); word-break: break-word; }
+.ref-card-sub  { font-size: .76rem; color: var(--gd); margin-bottom: .3rem; }
+.ref-card-text { font-size: .78rem; color: #669966; line-height: 1.5; }
+.ref-card-meta { font-size: .7rem; color: #004400; margin-top: .4rem; }
+.ref-card-actions { display: flex; gap: .5rem; margin-top: .6rem; }
+
+/* ── ESTADOS ── */
+.empty { color: var(--gd); font-size: .85rem; letter-spacing: .06em; padding: 2.5rem 0; text-align: center; line-height: 1.8; }
+.err {
+  border: 1px solid var(--red); border-left: 3px solid var(--red);
+  color: var(--red); background: rgba(255,51,51,.05);
+  font-size: .82rem; padding: .8rem 1rem; margin-bottom: 1rem; line-height: 1.6;
+}
+.ok-msg {
+  border: 1px solid var(--green); border-left: 3px solid var(--green);
+  color: var(--green); background: rgba(0,255,65,.04);
+  font-size: .82rem; padding: .8rem 1rem; margin-bottom: 1rem; line-height: 1.6;
+  animation: fadein .2s ease;
+}
+.spinner {
+  display: inline-block; width: 11px; height: 11px;
+  border: 2px solid #003300; border-top-color: var(--green);
+  border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle;
+}
+.warn-box {
+  border: 1px solid var(--amber); border-left: 3px solid var(--amber);
+  background: rgba(255,170,0,.04); color: var(--amber);
+  font-size: .75rem; padding: .7rem .9rem; margin-bottom: 1rem; line-height: 1.7;
+}
+.hide { display: none !important; }
+
+/* ── FORM ACTIONS ── */
+.form-actions {
+  display: flex; gap: .8rem; align-items: center;
+  margin-top: 1.2rem; flex-wrap: wrap;
+}
+.char-count { font-size: .72rem; color: #004400; }
+</style>
+</head>
+<body>
+<div id="scan"></div>
+
+<div class="page">
+
+  <div class="hd">
+    <div class="hd-title">ADMIN <span class="mg">//</span> NETIANAS</div>
+    <div class="hd-sub">
+      N(H)ACER MUJER EN INTERNET — panel de control del rizoma<br>
+      <span id="db-label" style="color:#004400">// cargando conexión…</span>
+    </div>
+  </div>
+
+  <!-- ══ GATE ══ -->
+  <div id="gate" class="gate">
+    <label class="gate-label" for="key">CONTRASEÑA</label>
+    <input type="password" id="key" placeholder="contraseña de admin" autocomplete="off" spellcheck="false">
+    <div id="gate-err" class="err hide" style="margin-top:.8rem"></div>
+    <div style="margin-top:.9rem;display:flex;gap:.6rem;align-items:center;">
+      <button class="btn" id="gate-btn">[ entrar ]</button>
+      <span id="gate-status" class="status"></span>
+    </div>
+  </div>
+
+  <!-- ══ PANEL ══ -->
+  <div id="panel" class="hide">
+
+    <div class="tabs">
+      <button class="tab on" data-tab="sugerencias">[ sugerencias ]<span class="cnt" id="cnt-sug"></span></button>
+      <button class="tab" data-tab="agregar">[ agregar referente ]</button>
+      <button class="tab" data-tab="referentes">[ referentes ]<span class="cnt" id="cnt-ref"></span></button>
+      <span style="flex:1"></span>
+      <button class="btn btn-sm" id="logout" style="border-color:#004400;color:#004400">[ salir ]</button>
+    </div>
+
+    <!-- ─── TAB: SUGERENCIAS ─── -->
+    <div id="tab-sugerencias">
+      <div class="subtabs">
+        <button class="subtab on" data-estado="pendiente">pendientes</button>
+        <button class="subtab" data-estado="aprobada">aprobadas</button>
+        <button class="subtab" data-estado="rechazada">rechazadas</button>
+      </div>
+      <div class="toolbar">
+        <button class="btn btn-sm" id="sug-reload">[ recargar ]</button>
+        <span class="spacer"></span>
+        <span class="status-bar" id="sug-status"></span>
+      </div>
+      <div id="sug-err" class="err hide"></div>
+      <div id="sug-list"></div>
+    </div>
+
+    <!-- ─── TAB: AGREGAR REFERENTE ─── -->
+    <div id="tab-agregar" class="hide">
+
+      <div id="agregar-ok" class="ok-msg hide"></div>
+      <div id="agregar-err" class="err hide"></div>
+
+      <!-- Selección netiana -->
+      <div class="form-section">
+        <h3>// 01 · selección de netiana</h3>
+        <div class="form-row">
+          <span class="form-label">Netiana <span class="req">*</span></span>
+          <div class="netiana-grid" id="netiana-grid"></div>
+        </div>
+      </div>
+
+      <!-- Datos básicos -->
+      <div class="form-section">
+        <h3>// 02 · datos de la referente</h3>
+        <div class="form-row">
+          <label class="form-label" for="f-titulo">Título <span class="req">*</span></label>
+          <input type="text" id="f-titulo" placeholder="ej: Cornelia Sollfrank" maxlength="200">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="f-sub">Subtítulo <span class="req">*</span></label>
+          <input type="text" id="f-sub" placeholder="ej: Alemania (europea) (citada por Zafra)" maxlength="300">
+          <div class="form-hint">País, región, año, tipo. Los tags entre paréntesis se hacen clickeables.</div>
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="f-texto">Texto descriptivo <span class="req">*</span></label>
+          <textarea id="f-texto" placeholder="Descripción de la obra o la artista y su relación con la netiana…" maxlength="800"></textarea>
+          <div class="form-hint" id="f-texto-count" style="text-align:right">0 / 800</div>
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="f-url">URL fuente</label>
+          <input type="url" id="f-url" placeholder="https://…">
+        </div>
+      </div>
+
+      <!-- Tags -->
+      <div class="form-section">
+        <h3>// 03 · tags del rizoma</h3>
+        <div class="form-row">
+          <span class="form-label">Tags existentes (seleccioná los que aplican)</span>
+          <div class="tags-grid" id="tags-existentes"></div>
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="f-tags-nuevos">Tags nuevos (separados por coma)</label>
+          <input type="text" id="f-tags-nuevos" placeholder="ej: archivo, memoria, piratería">
+          <div class="form-hint">Solo si ninguno de los existentes describe bien la obra.</div>
+        </div>
+      </div>
+
+      <!-- Imagen -->
+      <div class="form-section">
+        <h3>// 04 · imagen / gif</h3>
+
+        <div class="img-drop" id="img-drop">
+          <input type="file" id="f-img" accept="image/*,.gif" aria-label="Seleccionar imagen">
+          <div class="img-drop-text">
+            <strong>[ SELECCIONAR IMAGEN ]</strong>
+            JPG · PNG · GIF · WEBP<br>
+            Máximo 400 KB · recomendado 400×400 px
+          </div>
+        </div>
+
+        <div class="img-preview" id="img-preview">
+          <img id="img-thumb" src="" alt="">
+          <div class="img-preview-info">
+            <div class="name" id="img-name"></div>
+            <div class="size" id="img-size"></div>
+            <div id="img-dims" style="color:#004400"></div>
+          </div>
+        </div>
+
+        <div class="squoosh-box" id="squoosh-box">
+          ⚠ La imagen supera 400 KB.<br>
+          Comprimila antes de subir en <a href="https://squoosh.app" target="_blank" rel="noopener">squoosh.app</a> — es gratuito, funciona en el navegador y no sube nada a ningún servidor.<br>
+          <b>Recomendado:</b> WebP · calidad 75–85% · resize a 400×400 px máximo.<br>
+          Después volvé y seleccioná el archivo comprimido.
+        </div>
+
+        <div class="upload-progress" id="upload-progress">
+          <div class="upload-progress-bar" id="upload-bar"></div>
+        </div>
+
+        <div class="url-alt" id="url-alt">
+          <div class="url-alt-label" id="url-alt-toggle">O usar URL externa (para GIFs grandes ya hosteados)</div>
+          <div class="url-alt-input">
+            <input type="url" id="f-img-url" placeholder="https://example.com/imagen.gif">
+            <div class="form-hint">Si usás URL externa no se sube nada a Supabase. El sitio va a depender de que esa URL siga funcionando.</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Publicar -->
+      <div class="form-section">
+        <h3>// 05 · publicación</h3>
+        <div class="form-row" style="display:flex;align-items:center;gap:.8rem;">
+          <input type="checkbox" id="f-publicada" checked style="width:auto;accent-color:var(--green)">
+          <label for="f-publicada" class="form-label" style="margin:0;cursor:pointer">Publicar inmediatamente en el sitio</label>
+        </div>
+        <div class="form-hint">Si la desactivás queda guardada en la DB pero no aparece en netianas.vercel.app hasta que la actives.</div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-ok" id="agregar-submit">[ guardar referente ]</button>
+        <button class="btn btn-sm" id="agregar-reset" style="border-color:#004400;color:#004400">[ limpiar formulario ]</button>
+        <span class="status-bar" id="agregar-status"></span>
+      </div>
+
+    </div>
+
+    <!-- ─── TAB: REFERENTES ─── -->
+    <div id="tab-referentes" class="hide">
+      <div class="toolbar">
+        <select id="ref-filter-netiana" style="width:auto;font-size:.78rem;padding:.3rem .6rem">
+          <option value="">todas las netianas</option>
+        </select>
+        <select id="ref-filter-pub" style="width:auto;font-size:.78rem;padding:.3rem .6rem">
+          <option value="">todas</option>
+          <option value="true">publicadas</option>
+          <option value="false">ocultas</option>
+        </select>
+        <button class="btn btn-sm" id="ref-reload">[ recargar ]</button>
+        <span class="spacer"></span>
+        <span class="status-bar" id="ref-status"></span>
+      </div>
+      <div id="ref-err" class="err hide"></div>
+      <div id="ref-list"></div>
+    </div>
+
+  </div><!-- /panel -->
+</div><!-- /page -->
+
+<script>
+// ══════════════════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════════════════
+const SUPA_URL = 'https://rugiwjrqpjttugfmhscc.supabase.co';
+const BUCKET   = 'imagenes-referentes';
+const MAX_BYTES = 400 * 1024; // 400 KB
+
+const NETIANAS = [
+  { letra:'A', nombre:'Artivista' },
+  { letra:'B', nombre:'Buscadora' },
+  { letra:'C', nombre:'Cyborg' },
+  { letra:'D', nombre:'Doméstica' },
+  { letra:'E', nombre:'Esteganógrafa' },
+  { letra:'F', nombre:'Flâneuse' },
+  { letra:'G', nombre:'Geek' },
+  { letra:'H', nombre:'Hacktivista' },
+  { letra:'I', nombre:'Invisible' },
+  { letra:'J', nombre:'Jinetera' },
+  { letra:'K', nombre:'Karaokista' },
+  { letra:'L', nombre:'Lurker' },
+  { letra:'M', nombre:'Multitud' },
+  { letra:'N', nombre:'Nómade' },
+];
+
+const TAGS_RIZOMA = [
+  '(anglosajona)','(europea)','(asiática)','(africana)','(latinoamericana)',
+  '(colectivo)','(citada por Zafra)','(ref. vista en clase)','(ref. sugerida)',
+  'identidad','cuerpo','performatividad','género','feminismo','cyborg','posthumano',
+  'hacktivismo','artivismo','archivo','memoria','código','red','algoritmo',
+  'vigilancia','invisibilidad','domesticidad','nomadismo','multitud','rizoma',
+  'hipertexto','net.art','glitch','piratería','apropiación','open source',
+];
+
+// ══════════════════════════════════════════════════════════
+// ESTADO
+// ══════════════════════════════════════════════════════════
+let supabase = null;
+let selectedNetiana = null;  // { idx, letra, nombre }
+let imgFile = null;
+let imgUrlExternal = '';
+let sugEstado = 'pendiente';
+
+const $ = id => document.getElementById(id);
+
+// ── HTTP ────────────────────────────────────────────────────
+async function api(path, options = {}) {
+  const res = await fetch(`${API_BASE}${path}`, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+      ...(options.headers || {}),
+    },
+  });
+  let data = {};
+  try { data = await res.json(); } catch (_) {}
+  if (res.status === 401) { throw new Error('UNAUTHORIZED'); }
+  if (!res.ok || !data.ok) { throw new Error(data.error || `el servidor respondió ${res.status}`); }
+  return data;
+}
+
+// ── LOGIN ───────────────────────────────────────────────────
+async function entrar(key) {
+  const gateErr = $('gate-err');
+  gateErr.classList.add('hide');
+  $('gate-status').innerHTML = '<span class="spinner"></span>';
+  $('gate-btn').disabled = true;
+
+  apiKey = key;
+  try {
+    await api('/api/sugerencias?estado=pendiente');
+    sessionStorage.setItem('netianas_admin_key', key);
+    $('gate').classList.add('hide');
+    $('panel').classList.remove('hide');
+    await cargar();
+  } catch (e) {
+    apiKey = '';
+    sessionStorage.removeItem('netianas_admin_key');
+    gateErr.textContent = e.message === 'UNAUTHORIZED'
+      ? '// key incorrecta'
+      : `// no se pudo conectar con la API: ${e.message}`;
+    gateErr.classList.remove('hide');
+  } finally {
+    $('gate-status').textContent = '';
+    $('gate-btn').disabled = false;
+  }
+}
+
+$('gate-btn').addEventListener('click', () => {
+  const k = $('key').value.trim();
+  if (!k) return;
+  entrar(k);
+});
+$('key').addEventListener('keydown', e => { if (e.key === 'Enter') $('gate-btn').click(); });
+
+$('logout').addEventListener('click', () => {
+  apiKey = '';
+  sessionStorage.removeItem('netianas_admin_key');
+  $('key').value = '';
+  $('panel').classList.add('hide');
+  $('gate').classList.remove('hide');
+});
+
+// ── RENDER ──────────────────────────────────────────────────
+// Todo con textContent / createElement: las sugerencias las escribe
+// cualquiera desde el formulario público, así que nunca las inyectamos
+// como HTML.
+function el(tag, cls, text) {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text != null) n.textContent = text;
+  return n;
+}
+
+// ══════════════════════════════════════════════════════════
+// FILTER SELECT para referentes
+// ══════════════════════════════════════════════════════════
+function buildRefFilter() {
+  const sel = $('ref-filter-netiana');
+  NETIANAS.forEach((n, idx) => {
+    const opt = document.createElement('option');
+    opt.value = idx;
+    opt.textContent = `(${n.letra}) ${n.nombre}`;
+    sel.appendChild(opt);
+  });
+}
+
+// ══════════════════════════════════════════════════════════
+// IMAGEN UPLOAD
+// ══════════════════════════════════════════════════════════
+function initImgUpload() {
+  const drop = $('img-drop');
+  const fileInput = $('f-img');
+
+  // Drag & drop visual
+  drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('drag'); });
+  drop.addEventListener('dragleave', () => drop.classList.remove('drag'));
+  drop.addEventListener('drop', e => {
+    e.preventDefault(); drop.classList.remove('drag');
+    if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+  });
+
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files[0]) handleFile(fileInput.files[0]);
+  });
+
+  // URL externa toggle
+  $('url-alt-toggle').addEventListener('click', () => {
+    $('url-alt').classList.toggle('open');
+  });
+  $('f-img-url').addEventListener('input', () => {
+    imgUrlExternal = $('f-img-url').value.trim();
+  });
+}
+
+function handleFile(file) {
+  imgFile = file;
+  imgUrlExternal = '';
+  $('f-img-url').value = '';
+
+  // Preview
+  const preview = $('img-preview');
+  const thumb   = $('img-thumb');
+  preview.classList.add('show');
+
+  const reader = new FileReader();
+  reader.onload = e => { thumb.src = e.target.result; };
+  reader.readAsDataURL(file);
+
+  $('img-name').textContent = file.name;
+
+  const sizeKB  = (file.size / 1024).toFixed(1);
+  const sizeEl  = $('img-size');
+  const squoosh = $('squoosh-box');
+
+  if (file.size <= MAX_BYTES) {
+    sizeEl.className = 'size ok';
+    sizeEl.textContent = `✓ ${sizeKB} KB — OK`;
+    squoosh.classList.remove('show');
+  } else if (file.size <= MAX_BYTES * 2) {
+    sizeEl.className = 'size warn';
+    sizeEl.textContent = `⚠ ${sizeKB} KB — un poco grande`;
+    squoosh.classList.add('show');
+  } else {
+    sizeEl.className = 'size over';
+    sizeEl.textContent = `✗ ${sizeKB} KB — demasiado grande, comprimí antes`;
+    squoosh.classList.add('show');
+    imgFile = null; // bloquear subida hasta que compriman
+  }
+
+  // Dimensiones
+  if (file.type.startsWith('image/') && file.type !== 'image/gif') {
+    const img = new Image();
+    img.onload = () => {
+      $('img-dims').textContent = `${img.naturalWidth} × ${img.naturalHeight} px`;
+      URL.revokeObjectURL(img.src);
+    };
+    img.src = URL.createObjectURL(file);
+  }
+}
+
+async function subirImagen(titulo) {
+  if (!imgFile) return imgUrlExternal || null;
+
+  // Nombre único: netiana-letra_titulo-slug_timestamp.ext
+  const ext   = imgFile.name.split('.').pop().toLowerCase();
+  const slug  = titulo.toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g,'')
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40);
+  const letra = selectedNetiana ? selectedNetiana.letra.toLowerCase() : 'x';
+  const ts    = Date.now();
+  const path  = `${letra}/${slug}-${ts}.${ext}`;
+
+  $('upload-progress').classList.add('show');
+  $('upload-bar').style.width = '30%';
+
+  const { data, error } = await supabase.storage
+    .from(BUCKET)
+    .upload(path, imgFile, { contentType: imgFile.type, upsert: false });
+
+  $('upload-bar').style.width = '100%';
+  setTimeout(() => $('upload-progress').classList.remove('show'), 600);
+
+  if (error) throw new Error('Storage: ' + error.message);
+
+  const { data: urlData } = supabase.storage.from(BUCKET).getPublicUrl(path);
+  return urlData.publicUrl;
+}
+
+// ══════════════════════════════════════════════════════════
+// SUBMIT REFERENTE
+// ══════════════════════════════════════════════════════════
+async function submitReferente() {
+  $('agregar-ok').classList.add('hide');
+  $('agregar-err').classList.add('hide');
+
+  // Validaciones
+  if (!selectedNetiana) return mostrarErrForm('Seleccioná una netiana.');
+  const titulo = $('f-titulo').value.trim();
+  const sub    = $('f-sub').value.trim();
+  const texto  = $('f-texto').value.trim();
+  if (!titulo) return mostrarErrForm('El título es obligatorio.');
+  if (!sub)    return mostrarErrForm('El subtítulo es obligatorio.');
+  if (!texto)  return mostrarErrForm('El texto descriptivo es obligatorio.');
+
+  if (imgFile && imgFile.size > MAX_BYTES * 2) {
+    return mostrarErrForm('La imagen supera el límite. Comprimila en squoosh.app primero.');
+  }
+
+  const btn = $('agregar-submit');
+  btn.disabled = true;
+  $('agregar-status').innerHTML = '<span class="spinner"></span> guardando…';
+
+  try {
+    // Subir imagen
+    const imgUrl = await subirImagen(titulo);
+
+    // Tags
+    const tagsElegidos = getTagsSeleccionados();
+    const tagsNuevos   = $('f-tags-nuevos').value.split(',')
+      .map(t => t.trim()).filter(Boolean);
+    const allTags = [...tagsElegidos, ...tagsNuevos];
+
+    // Guardar en DB
+    const { error } = await supabase.from('referentes').insert({
+      netiana_idx:   selectedNetiana.idx,
+      netiana_letra: selectedNetiana.letra,
+      titulo,
+      subtitulo:  sub,
+      texto,
+      url_fuente: $('f-url').value.trim() || null,
+      img_url:    imgUrl,
+      img_nombre: imgFile ? imgFile.name : null,
+      tags:       allTags,
+      publicada:  $('f-publicada').checked,
+      origen:     'admin',
+    });
+
+    if (error) throw new Error(error.message);
+
+    $('agregar-ok').textContent = `✓ Referente "${titulo}" guardada en (${selectedNetiana.letra}) ${selectedNetiana.nombre}.`;
+    $('agregar-ok').classList.remove('hide');
+    $('agregar-status').textContent = '';
+    resetForm();
+    await cargarReferentes();
+
+  } catch (e) {
+    mostrarErrForm(e.message);
+  } finally {
+    btn.disabled = false;
+    $('agregar-status').textContent = '';
+  }
+}
+
+function mostrarErrForm(msg) {
+  $('agregar-err').textContent = '// ' + msg;
+  $('agregar-err').classList.remove('hide');
+  $('agregar-status').textContent = '';
+  $('agregar-submit').disabled = false;
+}
+
+function resetForm() {
+  selectedNetiana = null;
+  imgFile = null;
+  imgUrlExternal = '';
+  document.querySelectorAll('.netiana-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('.tag-check').forEach(c => c.checked = false);
+  ['f-titulo','f-sub','f-texto','f-url','f-tags-nuevos','f-img-url'].forEach(id => {
+    if ($(id)) $(id).value = '';
+  });
+  $('f-texto-count').textContent = '0 / 800';
+  $('f-publicada').checked = true;
+  $('f-img').value = '';
+  $('img-preview').classList.remove('show');
+  $('squoosh-box').classList.remove('show');
+  $('upload-progress').classList.remove('show');
+  $('url-alt').classList.remove('open');
+}
+
+// ══════════════════════════════════════════════════════════
+// SUGERENCIAS
+// ══════════════════════════════════════════════════════════
+async function cargarSugerencias() {
+  $('sug-err').classList.add('hide');
+  $('sug-status').innerHTML = '<span class="spinner"></span>';
+
+  try {
+    const { data, error, count } = await supabase
+      .from('sugerencias')
+      .select('*', { count: 'exact' })
+      .eq('estado', sugEstado)
+      .order('created_at', { ascending: false });
+
+    if (error) throw new Error(error.message);
+
+    $('sug-status').textContent = `${count} ${count === 1 ? 'sugerencia' : 'sugerencias'}`;
+    $('cnt-sug').textContent = '';
+
+    // Contar pendientes para el tab badge
+    const { count: pend } = await supabase
+      .from('sugerencias').select('*', { count:'exact', head:true }).eq('estado','pendiente');
+    if (pend > 0) $('cnt-sug').textContent = ` (${pend})`;
+
+    const list = $('sug-list');
+    list.textContent = '';
+    if (!data.length) {
+      const d = document.createElement('div');
+      d.className = 'empty';
+      d.textContent = `// no hay sugerencias en estado "${sugEstado}"`;
+      list.appendChild(d);
+      return;
+    }
+    data.forEach(s => list.appendChild(renderSugerencia(s)));
+  } catch (e) {
+    $('sug-status').textContent = '';
+    $('sug-err').textContent = '// ' + e.message;
+    $('sug-err').classList.remove('hide');
+  }
+}
+
+function renderSugerencia(s) {
+  const el = (tag, cls, text) => {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  };
+
+  const card = el('div', 'card');
+  card.dataset.id = s.id;
+
+  const hd = el('div','card-hd');
+  hd.appendChild(el('span','card-id','#'+s.id));
+  hd.appendChild(el('span','card-name', s.nombre));
+  hd.appendChild(el('span','badge '+s.estado, s.estado));
+  hd.appendChild(el('span','card-date', fecha(s.created_at)));
+  card.appendChild(hd);
+
+  if (s.link) {
+    const row = el('div','card-row');
+    row.appendChild(el('span','k','link'));
+    if (/^https?:\/\//i.test(s.link)) {
+      const a = el('a',null,s.link);
+      a.href = s.link; a.target = '_blank'; a.rel = 'noopener noreferrer nofollow';
+      row.appendChild(a);
+    } else { row.appendChild(document.createTextNode(s.link)); }
+    card.appendChild(row);
+  }
+
+  const netRow = el('div','card-row');
+  netRow.appendChild(el('span','k','netianas'));
+  const chips = el('div','chips');
+  (s.netianas||[]).forEach(n => chips.appendChild(el('span','chip net',n)));
+  netRow.appendChild(chips);
+  card.appendChild(netRow);
+
+  const pRow = el('div','card-row');
+  pRow.appendChild(el('span','k','por qué'));
+  pRow.appendChild(document.createTextNode(s.por_que));
+  card.appendChild(pRow);
+
+  if (s.tags?.length) {
+    const r = el('div','card-row');
+    r.appendChild(el('span','k','tags'));
+    const ch = el('div','chips');
+    s.tags.forEach(t => ch.appendChild(el('span','chip',t)));
+    r.appendChild(ch);
+    card.appendChild(r);
+  }
+  if (s.tags_nuevos?.length) {
+    const r = el('div','card-row');
+    r.appendChild(el('span','k','tags nuevos'));
+    const ch = el('div','chips');
+    s.tags_nuevos.forEach(t => ch.appendChild(el('span','chip nuevo',t)));
+    r.appendChild(ch);
+    card.appendChild(r);
+  }
+  if (s.contacto) {
+    const r = el('div','card-row');
+    r.appendChild(el('span','k','contacto'));
+    r.appendChild(document.createTextNode(s.contacto));
+    card.appendChild(r);
+  }
+
+  const actions = el('div','card-actions');
+
+  if (s.estado !== 'aprobada') {
+    const b = el('button','btn btn-sm btn-ok','[ aprobar ]');
+    b.addEventListener('click', () => cambiarEstado(s.id,'aprobada',card));
+    actions.appendChild(b);
+  }
+
+  // Botón "usar en referente" — pre-llena el formulario de agregar
+  if (s.estado === 'aprobada' || s.estado === 'pendiente') {
+    const b = el('button','btn btn-sm btn-mag','[ → agregar como referente ]');
+    b.addEventListener('click', () => prellenarDesde(s));
+    actions.appendChild(b);
+  }
+
+  if (s.estado !== 'rechazada') {
+    const b = el('button','btn btn-sm btn-no','[ rechazar ]');
+    b.addEventListener('click', () => {
+      if (confirm(`¿Rechazar sugerencia #${s.id}?`)) cambiarEstado(s.id,'rechazada',card);
+    });
+    actions.appendChild(b);
+  }
+  if (s.estado !== 'pendiente') {
+    const b = el('button','btn btn-sm','[ volver a pendiente ]');
+    b.addEventListener('click', () => cambiarEstado(s.id,'pendiente',card));
+    actions.appendChild(b);
+  }
+
+  card.appendChild(actions);
+  return card;
+}
+
+async function cambiarEstado(id, estado, card) {
+  card.classList.add('busy');
+  try {
+    const { error } = await supabase
+      .from('sugerencias').update({ estado }).eq('id', id);
+    if (error) throw new Error(error.message);
+    await cargarSugerencias();
+  } catch (e) {
+    card.classList.remove('busy');
+    $('sug-err').textContent = '// ' + e.message;
+    $('sug-err').classList.remove('hide');
+  }
+}
+
+// Pre-llenar el form de agregar desde una sugerencia
+function prellenarDesde(s) {
+  // Ir al tab de agregar
+  document.querySelector('.tab[data-tab="agregar"]').click();
+
+  // Título = nombre de la sugerencia
+  $('f-titulo').value = s.nombre;
+  if (s.link) $('f-url').value = s.link;
+  if (s.por_que) $('f-texto').value = s.por_que;
+  $('f-texto-count').textContent = ($('f-texto').value.length) + ' / 800';
+
+  // Tags
+  const todosLosTags = [...(s.tags||[]), ...(s.tags_nuevos||[])];
+  document.querySelectorAll('.tag-check').forEach(c => {
+    c.checked = todosLosTags.includes(c.value);
+  });
+  const nuevos = (s.tags_nuevos||[]).filter(t => !TAGS_RIZOMA.includes(t));
+  if (nuevos.length) $('f-tags-nuevos').value = nuevos.join(', ');
+
+  // Seleccionar netiana (primera mencionada)
+  const primera = (s.netianas||[])[0];
+  if (primera) {
+    const m = /\(([A-N])\)/i.exec(primera);
+    if (m) {
+      const letra = m[1].toUpperCase();
+      const idx = NETIANAS.findIndex(n => n.letra === letra);
+      if (idx >= 0) {
+        document.querySelectorAll('.netiana-btn')[idx].click();
+      }
+    }
+  }
+
+  $('agregar-ok').textContent = `↑ Pre-llenado desde sugerencia #${s.id} — completá la imagen y guardá.`;
+  $('agregar-ok').classList.remove('hide');
+}
+
+// ══════════════════════════════════════════════════════════
+// REFERENTES LIST
+// ══════════════════════════════════════════════════════════
+async function cargarReferentes() {
+  $('ref-err').classList.add('hide');
+  $('ref-status').innerHTML = '<span class="spinner"></span>';
+
+  try {
+    let q = supabase.from('referentes').select('*', { count:'exact' })
+      .order('netiana_idx').order('created_at', { ascending: false });
+
+    const filtNet = $('ref-filter-netiana').value;
+    const filtPub = $('ref-filter-pub').value;
+    if (filtNet !== '') q = q.eq('netiana_idx', parseInt(filtNet));
+    if (filtPub !== '') q = q.eq('publicada', filtPub === 'true');
+
+    const { data, error, count } = await q;
+    if (error) throw new Error(error.message);
+
+    $('ref-status').textContent = `${count} ${count === 1 ? 'referente' : 'referentes'}`;
+    $('cnt-ref').textContent = count > 0 ? ` (${count})` : '';
+
+    const list = $('ref-list');
+    list.textContent = '';
+
+    if (!data.length) {
+      const d = document.createElement('div');
+      d.className = 'empty';
+      d.textContent = '// no hay referentes con estos filtros';
+      list.appendChild(d);
+      return;
+    }
+    data.forEach(r => list.appendChild(renderReferente(r)));
+
+  } catch (e) {
+    $('ref-status').textContent = '';
+    $('ref-err').textContent = '// ' + e.message;
+    $('ref-err').classList.remove('hide');
+  }
+}
+
+function renderReferente(r) {
+  const card = document.createElement('div');
+  card.className = 'ref-card';
+
+  // Imagen
+  if (r.img_url) {
+    const img = document.createElement('img');
+    img.src = r.img_url; img.alt = r.titulo;
+    img.loading = 'lazy';
+    card.appendChild(img);
+  } else {
+    const ph = document.createElement('div');
+    ph.className = 'ref-card-img-placeholder';
+    ph.textContent = 'sin img';
+    card.appendChild(ph);
+  }
+
+  const body = document.createElement('div');
+  body.className = 'ref-card-body';
+
+  const top = document.createElement('div');
+  top.className = 'ref-card-top';
+  const letra = document.createElement('span');
+  letra.className = 'ref-card-letra';
+  letra.textContent = `(${r.netiana_letra})`;
+  const tit = document.createElement('span');
+  tit.className = 'ref-card-title';
+  tit.textContent = r.titulo;
+  top.appendChild(letra); top.appendChild(tit);
+  body.appendChild(top);
+
+  if (r.subtitulo) {
+    const sub = document.createElement('div');
+    sub.className = 'ref-card-sub';
+    sub.textContent = r.subtitulo;
+    body.appendChild(sub);
+  }
+  if (r.texto) {
+    const txt = document.createElement('div');
+    txt.className = 'ref-card-text';
+    txt.textContent = r.texto.slice(0,120) + (r.texto.length > 120 ? '…' : '');
+    body.appendChild(txt);
+  }
+
+  const meta = document.createElement('div');
+  meta.className = 'ref-card-meta';
+  meta.textContent = `id:${r.id} · ${fecha(r.created_at)} · ${r.publicada ? '✓ publicada' : '○ oculta'} · origen: ${r.origen}`;
+  body.appendChild(meta);
+
+  const acts = document.createElement('div');
+  acts.className = 'ref-card-actions';
+
+  // Toggle publicada/oculta
+  const togBtn = document.createElement('button');
+  togBtn.className = 'btn btn-sm';
+  togBtn.textContent = r.publicada ? '[ ocultar ]' : '[ publicar ]';
+  togBtn.addEventListener('click', async () => {
+    togBtn.disabled = true;
+    const { error } = await supabase
+      .from('referentes').update({ publicada: !r.publicada }).eq('id', r.id);
+    if (error) { alert('Error: ' + error.message); togBtn.disabled = false; return; }
+    await cargarReferentes();
+  });
+  acts.appendChild(togBtn);
+
+  body.appendChild(acts);
+  card.appendChild(body);
+  return card;
+}
+
+// ══════════════════════════════════════════════════════════
+// UTILIDADES
+// ══════════════════════════════════════════════════════════
+function fecha(iso) {
+  try {
+    return new Date(iso).toLocaleString('es-AR', {
+      day:'2-digit', month:'2-digit', year:'numeric',
+      hour:'2-digit', minute:'2-digit'
+    });
+  } catch(_) { return iso || ''; }
+}
+</script>
+</body>
+</html>
