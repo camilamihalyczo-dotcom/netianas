@@ -1,5 +1,5 @@
 // Vercel Serverless Function — POST /api/sugerencias
-// Guarda una sugerencia de referente en la tabla `suggestions` de Supabase.
+// Guarda una sugerencia de referente en la tabla `sugerencias` de Supabase.
 
 const { createClient } = require('@supabase/supabase-js');
 
@@ -50,7 +50,7 @@ module.exports = async function handler(req, res) {
   const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
   const { data, error } = await supabase
-    .from('suggestions')
+    .from('sugerencias')
     .insert({
       nombre:      nombre.trim(),
       link:        link?.trim() || null,
