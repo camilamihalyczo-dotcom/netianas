@@ -1310,7 +1310,8 @@ function buildSidebar() {
 /* history for back button: stores {type:'node'|'home', idx} */
 let navHistory = [];
 
-function showNode(idx) {
+async function showNode(idx) {
+  await refsReady;
   document.querySelectorAll('.nb').forEach(b => b.classList.remove('on'));
   const nbEl = document.getElementById('nb' + idx);
   if (nbEl) nbEl.classList.add('on');
@@ -1615,8 +1616,9 @@ function buildRefTagMap() {
   });
 }
 
-// Iniciar: cargar desde Supabase, luego construir el mapa y la UI
-cargarReferentes().then(() => {
+// Iniciar: cargar desde Supabase, luego construir el mapa
+// Guardamos la promise para que buildRefGrid pueda esperarla
+const refsReady = cargarReferentes().then(() => {
   buildRefTagMap();
 });
 
