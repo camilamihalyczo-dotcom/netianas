@@ -1587,7 +1587,7 @@ async function cargarReferentes() {
       const idx = row.netiana_idx;
       if (!REFS[idx]) REFS[idx] = [];
       REFS[idx].push({
-        img:   row.img_url || (row.img_nombre ? row.img_nombre : null),
+        img:   row.img_url && row.img_url.startsWith('http') ? row.img_url : (row.img_nombre ? row.img_nombre : null),
         title: row.titulo,
         sub:   row.tags || [],
         body:  row.texto || ''
@@ -1716,7 +1716,7 @@ function buildRefGrid(gridEl, expandedEl, netIdx) {
     card.className = 'ref-card';
     card.innerHTML = `
       <div class="ref-img">
-        <img src="img/${ref.img}" alt="${ref.title}"
+        <img src="${ref.img && ref.img.startsWith('http') ? ref.img : 'img/' + ref.img}" alt="${ref.title}"
              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
         <div class="ref-img-placeholder" style="display:none">
           IMG<span>— ${ref.title} —</span>
@@ -1750,7 +1750,7 @@ function buildRefGrid(gridEl, expandedEl, netIdx) {
         imgEl.className = 'ref-exp-img-wrap';
         expandedEl.insertBefore(imgEl, titleEl);
       }
-      imgEl.innerHTML = `<img src="img/${ref.img}" alt="${ref.title}" style="max-width:100%;max-height:320px;object-fit:contain;filter:grayscale(20%) contrast(1.1);display:block;margin-bottom:.8rem;" onerror="this.style.display='none'">`;
+      imgEl.innerHTML = `<img src="${ref.img && ref.img.startsWith('http') ? ref.img : 'img/' + ref.img}" alt="${ref.title}" style="max-width:100%;max-height:320px;object-fit:contain;filter:grayscale(20%) contrast(1.1);display:block;margin-bottom:.8rem;" onerror="this.style.display='none'">`;
 
       // wire tag clicks
       subEl.querySelectorAll('.ref-tag-link').forEach(el => {
@@ -1795,7 +1795,7 @@ function buildMobRefGrid(gridEl, expandedEl, netIdx) {
     card.className = 'mob-ref-card';
     card.innerHTML = `
       <div class="mob-ref-img">
-        <img src="img/${ref.img}" alt="${ref.title}" style="width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(30%)"
+        <img src="${ref.img && ref.img.startsWith('http') ? ref.img : 'img/' + ref.img}" alt="${ref.title}" style="width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(30%)"
              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
         <div class="mob-ref-img-ph" style="display:none">IMG<span>— ${ref.title} —</span></div>
       </div>
@@ -1813,7 +1813,7 @@ function buildMobRefGrid(gridEl, expandedEl, netIdx) {
 
       expandedEl.innerHTML = `
         <button class="mob-ref-exp-close">[ × CERRAR ]</button>
-        <img src="img/${ref.img}" alt="${ref.title}" style="max-width:100%;max-height:240px;object-fit:contain;display:block;margin-bottom:.7rem;filter:grayscale(20%)" onerror="this.style.display='none'">
+        <img src="${ref.img && ref.img.startsWith('http') ? ref.img : 'img/' + ref.img}" alt="${ref.title}" style="max-width:100%;max-height:240px;object-fit:contain;display:block;margin-bottom:.7rem;filter:grayscale(20%)" onerror="this.style.display='none'">
         <div class="mob-ref-exp-title">${ref.title}</div>
         <div class="mob-ref-exp-sub" id="mob-ref-sub-${i}">${renderSub(ref.sub)}</div>
         <div class="mob-ref-exp-body">${ref.body}</div>`;
