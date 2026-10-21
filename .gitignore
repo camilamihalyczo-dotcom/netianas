@@ -12,6 +12,10 @@ desktop.ini
 .idea/
 *.swp
 
+# Dependencias
+node_modules/
+package-lock.json
+
 # Nunca subir secretos
 .env
 .env.local

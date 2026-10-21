@@ -247,6 +247,11 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
   border-color: var(--cyan); color: var(--cyan); background: rgba(0,255,255,.06);
 }
 .tag-label:hover { border-color: var(--gd); color: var(--green); }
+.tag-group-lbl {
+  font-size: .65rem; color: #002800; letter-spacing: .12em;
+  text-transform: uppercase; width: 100%;
+  margin-top: .5rem; margin-bottom: .1rem;
+}
 
 /* ── IMAGEN UPLOAD ── */
 .img-drop {
@@ -590,14 +595,28 @@ const NETIANAS = [
   { letra:'N', nombre:'Nómade' },
 ];
 
-const TAGS_RIZOMA = [
-  '(anglosajona)','(europea)','(asiática)','(africana)','(latinoamericana)',
-  '(colectivo)','(citada por Zafra)','(ref. vista en clase)','(ref. sugerida)',
-  'identidad','cuerpo','performatividad','género','feminismo','cyborg','posthumano',
-  'hacktivismo','artivismo','archivo','memoria','código','red','algoritmo',
-  'vigilancia','invisibilidad','domesticidad','nomadismo','multitud','rizoma',
-  'hipertexto','net.art','glitch','piratería','apropiación','open source',
+const TAGS_RIZOMA_GROUPS = [
+  { label: '// geografía',
+    tags: ['latinoamericana','europea','anglosajona','asiática','africana'] },
+  { label: '// tipo',
+    tags: ['colectivo','artista','escritora','investigadora','profesora','creadora/comunicadora de contenido'] },
+  { label: '// formato / práctica',
+    tags: ['net.art','video','performance','manifiesto'] },
+  { label: '// vínculo con la obra',
+    tags: ['citada por Zafra','ref. vista en clase','ref. sugerida'] },
+  { label: '// conceptual',
+    tags: ['poder corporativo','esteganografía','limen','patriarcado digital','software libre',
+           'vigilancia','biopolítica','Haraway','cuerpo-máquina','cyborg','frontera','algoritmo',
+           'dato','academia','legitimidad','pantalla','jardín secreto','virtualidad','cuerpo',
+           'Kristeva','Butler','performatividad','cuerpo-texto','ficción','desidentificación',
+           'máscara','avatar','representación','teatralidad digital','posthumano','queer','exceso',
+           'no-normativo','metaficción','ironía','autoconciencia','multiplicidad','identidad online',
+           'presencia','tiempo','rizoma','líneas de fuga','Deleuze','incontabilidad','devenir',
+           'tipografía','formato','archivo','apertura','indeterminación','etcétera','meritocracia',
+           'devenir-animal','efímero','identidad'] },
 ];
+// Array plano derivado de los grupos — usado para compatibilidad con lógica existente
+const TAGS_RIZOMA = TAGS_RIZOMA_GROUPS.flatMap(g => g.tags);
 
 // ══════════════════════════════════════════════════════════
 // ESTADO
@@ -755,16 +774,23 @@ function buildNetianaGrid() {
 function buildTagsGrid() {
   const grid = $('tags-existentes');
   grid.innerHTML = '';
-  TAGS_RIZOMA.forEach((tag, i) => {
-    const id = 'tag_' + i;
-    const inp = document.createElement('input');
-    inp.type = 'checkbox'; inp.className = 'tag-check';
-    inp.id = id; inp.value = tag;
-    const lbl = document.createElement('label');
-    lbl.className = 'tag-label'; lbl.htmlFor = id;
-    lbl.textContent = tag;
-    grid.appendChild(inp);
-    grid.appendChild(lbl);
+  let globalIdx = 0;
+  TAGS_RIZOMA_GROUPS.forEach(group => {
+    const sep = document.createElement('div');
+    sep.className = 'tag-group-lbl';
+    sep.textContent = group.label;
+    grid.appendChild(sep);
+    group.tags.forEach(tag => {
+      const id = 'tag_' + globalIdx++;
+      const inp = document.createElement('input');
+      inp.type = 'checkbox'; inp.className = 'tag-check';
+      inp.id = id; inp.value = tag;
+      const lbl = document.createElement('label');
+      lbl.className = 'tag-label'; lbl.htmlFor = id;
+      lbl.textContent = tag;
+      grid.appendChild(inp);
+      grid.appendChild(lbl);
+    });
   });
 }
 
